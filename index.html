@@ -1,0 +1,2961 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Hide and Seek - Libro de Investigación</title>
+    <style>
+        :root {
+            --header-height: 60px;
+            --bottom-nav-height: 64px;
+            --spacing-unit: 16px;
+            --content-padding: 16px;
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success-color: #4caf50;
+            --danger-color: #f54242;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Safe area insets para dispositivos con notch */
+        @supports (padding: max(0px)) {
+            body {
+                padding-top: max(20px, env(safe-area-inset-top));
+                padding-bottom: max(20px, env(safe-area-inset-bottom));
+            }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .controls {
+            background: #f8f9fa;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #e0e0e0;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            background: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: 2px solid #667eea;
+        }
+
+        .stat-item strong {
+            color: #667eea;
+            font-size: 1.2em;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #f54242 0%, #c72828 100%);
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        .category {
+            margin-bottom: 30px;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .category:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-color: #667eea;
+        }
+
+        .category-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 25px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .category-header:hover {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        }
+
+        .category-title-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .category-title {
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+
+        .question-count {
+            background: rgba(255,255,255,0.3);
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            backdrop-filter: blur(10px);
+        }
+
+        .category-info {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+        }
+
+        .category-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .category.active .category-content {
+            max-height: 5000px;
+        }
+
+        .category-body {
+            padding: 25px;
+            background: #f8f9fa;
+        }
+
+        .question-format {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border-left: 4px solid #667eea;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .question-format h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .subcategory {
+            margin-top: 20px;
+        }
+
+        .subcategory h4 {
+            color: #764ba2;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e0e0e0;
+            font-size: 1.1em;
+        }
+
+        .item-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .question-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+            transition: all 0.2s ease;
+        }
+
+        .question-item.asked {
+            background: #e8f5e9;
+            border-color: #4caf50;
+        }
+
+        .question-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+        }
+
+        .question-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .question-checkbox {
+            margin-top: 3px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .question-name {
+            color: #667eea;
+            font-weight: 600;
+            flex: 1;
+        }
+
+        .question-item.asked .question-name {
+            color: #2e7d32;
+        }
+
+        .notes-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 0.9em;
+            resize: vertical;
+            min-height: 60px;
+            font-family: inherit;
+            margin-top: 8px;
+        }
+
+        .notes-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .photo-item {
+            background: white;
+            padding: 18px;
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+
+        .photo-item.asked {
+            background: #e8f5e9;
+            border-color: #4caf50;
+        }
+
+        .photo-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.2);
+        }
+
+        .photo-item h5 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .photo-item.asked h5 {
+            color: #2e7d32;
+        }
+
+        .photo-item p {
+            color: #666;
+            font-size: 0.95em;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        .info-section {
+            background: #fff9e6;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #ffd700;
+            margin-top: 20px;
+        }
+
+        .info-section h4 {
+            color: #d4a017;
+            margin-bottom: 10px;
+        }
+
+        .toggle-icon {
+            font-size: 1.5em;
+            transition: transform 0.3s ease;
+        }
+
+        .category.active .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9em;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            margin: 20px;
+            animation: slideIn 0.3s ease;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            justify-content: flex-end;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2em;
+            }
+
+            .category-title {
+                font-size: 1.4em;
+            }
+
+            .item-list, .photo-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .category-info {
+                font-size: 0.85em;
+            }
+
+            .content {
+                padding: 20px 15px;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .stats {
+                justify-content: center;
+            }
+        }
+
+        /* ========== NUEVOS ESTILOS PARA TABS Y NAVEGACIÓN ========== */
+
+        /* Tabs Container */
+        .tabs-container {
+            padding-bottom: calc(var(--bottom-nav-height) + 20px);
+            min-height: calc(100vh - var(--header-height));
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: var(--bottom-nav-height);
+            background: var(--primary-gradient);
+            display: flex;
+            z-index: 100;
+            box-shadow: 0 -4px 12px rgba(0,0,0,0.15);
+        }
+
+        @supports (padding: max(0px)) {
+            .bottom-nav {
+                padding-bottom: max(8px, env(safe-area-inset-bottom));
+            }
+        }
+
+        .nav-button {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            min-height: 44px;
+            color: rgba(255,255,255,0.7);
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.85em;
+            font-family: inherit;
+        }
+
+        .nav-button.active {
+            color: white;
+            background: rgba(255,255,255,0.15);
+        }
+
+        .nav-icon {
+            font-size: 1.5em;
+        }
+
+        .nav-label {
+            font-weight: 500;
+        }
+
+        /* Info Icon Button */
+        .info-icon-btn {
+            background: rgba(255,255,255,0.9);
+            color: #667eea;
+            border: 2px solid rgba(255,255,255,0.5);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1.2em;
+            min-width: 44px;
+            min-height: 44px;
+            padding: 0;
+        }
+
+        .info-icon-btn:hover,
+        .info-icon-btn:focus {
+            background: white;
+            transform: scale(1.1);
+            outline: 3px solid rgba(255,255,255,0.5);
+        }
+
+        .info-icon {
+            pointer-events: none;
+        }
+
+        /* Smaller info icon for individual questions */
+        .info-icon-small {
+            width: 24px;
+            height: 24px;
+            min-width: 36px;
+            min-height: 36px;
+            font-size: 1em;
+            margin-left: auto;
+        }
+
+        /* Help Overlay */
+        .help-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 1000;
+            padding: 20px;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .help-overlay.show {
+            display: flex;
+        }
+
+        .help-popup {
+            background: white;
+            border-radius: 16px;
+            max-width: 500px;
+            max-height: 80vh;
+            width: 100%;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .help-header {
+            position: sticky;
+            top: 0;
+            background: var(--primary-gradient);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 16px 16px 0 0;
+            z-index: 10;
+        }
+
+        .help-header h3 {
+            margin: 0;
+            font-size: 1.3em;
+        }
+
+        .help-close-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            font-size: 24px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s ease;
+        }
+
+        .help-close-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .help-body {
+            padding: 20px;
+        }
+
+        .help-section {
+            margin-bottom: 20px;
+        }
+
+        .help-section h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .help-format {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            margin: 10px 0;
+            font-style: italic;
+        }
+
+        .help-tips {
+            list-style: none;
+            padding: 0;
+        }
+
+        .help-tips li {
+            padding: 8px 0 8px 28px;
+            position: relative;
+        }
+
+        .help-tips li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #4caf50;
+            font-weight: bold;
+        }
+
+        .help-important {
+            background: #fff9e6;
+            border-left: 4px solid #ffd700;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        /* Manual Styles */
+        .manual-toc-sticky {
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 50;
+            padding: 15px 20px;
+            border-bottom: 2px solid #e0e0e0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .toc-toggle-btn {
+            width: 100%;
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            min-height: 44px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: opacity 0.2s ease;
+        }
+
+        .toc-toggle-btn:active {
+            opacity: 0.8;
+        }
+
+        .manual-toc {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .manual-toc.open {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .toc-nav {
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+        }
+
+        .toc-link {
+            padding: 12px 20px;
+            color: #667eea;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+        }
+
+        .toc-link:active {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .toc-link.active {
+            background: rgba(102, 126, 234, 0.15);
+            font-weight: 600;
+        }
+
+        .manual-content {
+            padding: 20px;
+            padding-bottom: 100px;
+        }
+
+        .manual-section {
+            margin-bottom: 40px;
+            scroll-margin-top: 140px;
+        }
+
+        .manual-section h2 {
+            color: #667eea;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .manual-section h3 {
+            color: #764ba2;
+            font-size: 1.4em;
+            margin: 25px 0 15px 0;
+        }
+
+        .manual-section h4 {
+            color: #333;
+            font-size: 1.2em;
+            margin: 20px 0 10px 0;
+        }
+
+        .manual-section p {
+            line-height: 1.8;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .manual-section ul,
+        .manual-section ol {
+            margin: 15px 0;
+            padding-left: 30px;
+            line-height: 1.8;
+        }
+
+        .manual-section li {
+            margin-bottom: 8px;
+        }
+
+        .manual-highlight {
+            background: #fff9e6;
+            border-left: 4px solid #ffd700;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .manual-tip {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .sr-only {
+            position: absolute;
+            left: -10000px;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+        }
+
+        /* Additional mobile optimizations */
+        @media (max-width: 374px) {
+            :root {
+                --content-padding: 12px;
+            }
+
+            .category-title {
+                font-size: 1.2em;
+            }
+
+            .nav-label {
+                font-size: 0.75em;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .item-list {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .help-popup {
+                max-width: 600px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🕵️ HIDE AND SEEK 🔍</h1>
+            <p>Libro de Investigación - Juegos Pequeños</p>
+        </header>
+
+        <div class="tabs-container">
+            <!-- TAB 1: SEGUIMIENTO -->
+            <div id="seguimientoTab" class="tab-content active" role="tabpanel" aria-labelledby="nav-seguimiento">
+
+        <div class="controls">
+            <div class="stats">
+                <div class="stat-item">
+                    <span>Preguntas: </span>
+                    <strong id="totalQuestions">0</strong>
+                </div>
+                <div class="stat-item">
+                    <span>Cartas: </span>
+                    <strong id="totalCards">0 / 0</strong>
+                </div>
+            </div>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button class="btn" onclick="exportData()">💾 Exportar</button>
+                <button class="btn" onclick="importData()">📥 Importar</button>
+                <button class="btn btn-danger" onclick="showResetModal()">🔄 Reiniciar</button>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- MATCHING -->
+            <div class="category" data-category="matching">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <div class="category-title-section">
+                        <span class="category-title">1. MATCHING</span>
+                        <button class="info-icon-btn" onclick="showCategoryHelp(event, 'matching')"
+                                aria-label="Ayuda sobre Matching">
+                            <span class="info-icon">ℹ️</span>
+                        </button>
+                        <span class="question-count"><span class="asked-count">0</span> / <span class="total-count">0</span></span>
+                    </div>
+                    <div class="category-info">
+                        <span class="badge">📝 Draw 3, Pick 1</span>
+                        <span class="badge">⏱️ 5 minutos</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                </div>
+                <div class="category-content">
+                    <div class="category-body">
+                        <div class="question-format">
+                            <h3>Formato de Pregunta</h3>
+                            <p><strong>Is your nearest _______ the same as my nearest _______?</strong></p>
+                        </div>
+
+                        <div class="subcategory">
+                            <h4>🚆 TRANSIT</h4>
+                            <div class="item-list">
+                                <div class="question-item" data-category="matching">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">Commercial Airport</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                                <div class="question-item" data-category="matching">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">Transit Line</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                                <div class="question-item" data-category="matching">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">Station's Name Length</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                                <div class="question-item" data-category="matching">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">Street or Path</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="subcategory">
+                            <h4>🗺️ ADMINISTRATIVE DIVISIONS</h4>
+                            <div class="item-list">
+                                <div class="question-item" data-category="matching">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">1st Admin. Division</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                                <div class="question-item" data-category="matching">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">2nd Admin. Division</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                                <div class="question-item" data-category="matching">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">3rd Admin. Division</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                                <div class="question-item" data-category="matching">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">4th Admin. Division</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="subcategory">
+                            <h4>🏔️ NATURAL</h4>
+                            <div class="item-list">
+                                <div class="question-item" data-category="matching">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">Mountain</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                                <div class="question-item" data-category="matching">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">Landmass</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                                <div class="question-item" data-category="matching">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">Park</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="subcategory">
+                            <h4>🎡 PLACES OF INTEREST</h4>
+                            <div class="item-list">
+                                <div class="question-item" data-category="matching">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">Amusement Park</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                                <div class="question-item" data-category="matching">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">Zoo</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                                <div class="question-item" data-category="matching">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">Aquarium</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                                <div class="question-item" data-category="matching">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">Golf Course</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                                <div class="question-item" data-category="matching">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">Museum</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                                <div class="question-item" data-category="matching">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">Movie Theater</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="subcategory">
+                            <h4>🏥 PUBLIC UTILITIES</h4>
+                            <div class="item-list">
+                                <div class="question-item" data-category="matching">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">Hospital</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                                <div class="question-item" data-category="matching">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">Library</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                                <div class="question-item" data-category="matching">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">Foreign Consulate</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MEASURING -->
+            <div class="category" data-category="measuring">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <div class="category-title-section">
+                        <span class="category-title">2. MEASURING</span>
+                        <button class="info-icon-btn" onclick="showCategoryHelp(event, 'measuring')"
+                                aria-label="Ayuda sobre Measuring">
+                            <span class="info-icon">ℹ️</span>
+                        </button>
+                        <span class="question-count"><span class="asked-count">0</span> / <span class="total-count">0</span></span>
+                    </div>
+                    <div class="category-info">
+                        <span class="badge">📝 Draw 3, Pick 1</span>
+                        <span class="badge">⏱️ 5 minutos</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                </div>
+                <div class="category-content">
+                    <div class="category-body">
+                        <div class="question-format">
+                            <h3>Formato de Pregunta</h3>
+                            <p><strong>Compared to me, are you closer to or further from _______?</strong></p>
+                        </div>
+
+                        <div class="subcategory">
+                            <h4>🚆 TRANSIT</h4>
+                            <div class="item-list">
+                                <div class="question-item" data-category="measuring">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">A Commercial Airport</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                                <div class="question-item" data-category="measuring">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">A High Speed Train Line</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                                <div class="question-item" data-category="measuring">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">A Rail Station</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="subcategory">
+                            <h4>🗺️ BORDERS</h4>
+                            <div class="item-list">
+                                <div class="question-item" data-category="measuring">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">An International Border</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                                <div class="question-item" data-category="measuring">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">A 1st Admin. Div. Border</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                                <div class="question-item" data-category="measuring">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">A 2nd Admin. Div. Border</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="subcategory">
+                            <h4>🏔️ NATURAL</h4>
+                            <div class="item-list">
+                                <div class="question-item" data-category="measuring">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">Sea Level</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                                <div class="question-item" data-category="measuring">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">A Body of Water</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                                <div class="question-item" data-category="measuring">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">A Coastline</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                                <div class="question-item" data-category="measuring">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">A Mountain</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                                <div class="question-item" data-category="measuring">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">A Park</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="subcategory">
+                            <h4>🎡 PLACES OF INTEREST</h4>
+                            <div class="item-list">
+                                <div class="question-item" data-category="measuring">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">An Amusement Park</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                                <div class="question-item" data-category="measuring">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">A Zoo</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                                <div class="question-item" data-category="measuring">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">An Aquarium</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                                <div class="question-item" data-category="measuring">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">A Golf Course</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                                <div class="question-item" data-category="measuring">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">A Museum</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                                <div class="question-item" data-category="measuring">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">A Movie Theater</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="subcategory">
+                            <h4>🏥 PUBLIC UTILITIES</h4>
+                            <div class="item-list">
+                                <div class="question-item" data-category="measuring">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">A Hospital</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                                <div class="question-item" data-category="measuring">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">A Library</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                                <div class="question-item" data-category="measuring">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">A Foreign Consulate</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- THERMOMETER -->
+            <div class="category" data-category="thermometer">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <div class="category-title-section">
+                        <span class="category-title">3. THERMOMETER</span>
+                        <button class="info-icon-btn" onclick="showCategoryHelp(event, 'thermometer')"
+                                aria-label="Ayuda sobre Thermometer">
+                            <span class="info-icon">ℹ️</span>
+                        </button>
+                        <span class="question-count"><span class="asked-count">0</span> / <span class="total-count">0</span></span>
+                    </div>
+                    <div class="category-info">
+                        <span class="badge">📝 Draw 2, Pick 1</span>
+                        <span class="badge">⏱️ 5 minutos</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                </div>
+                <div class="category-content">
+                    <div class="category-body">
+                        <div class="question-format">
+                            <h3>Formato de Pregunta</h3>
+                            <p><strong>I've just traveled (at least) [Distance]. Am I hotter or colder?</strong></p>
+                        </div>
+
+                        <div class="subcategory">
+                            <h4>📏 Distancias Disponibles (Juegos Pequeños)</h4>
+                            <div class="item-list">
+                                <div class="question-item" data-category="thermometer">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">1 km</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                                <div class="question-item" data-category="thermometer">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">5 km</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RADAR -->
+            <div class="category" data-category="radar">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <div class="category-title-section">
+                        <span class="category-title">4. RADAR</span>
+                        <button class="info-icon-btn" onclick="showCategoryHelp(event, 'radar')"
+                                aria-label="Ayuda sobre Radar">
+                            <span class="info-icon">ℹ️</span>
+                        </button>
+                        <span class="question-count"><span class="asked-count">0</span> / <span class="total-count">0</span></span>
+                    </div>
+                    <div class="category-info">
+                        <span class="badge">📝 Draw 2, Pick 1</span>
+                        <span class="badge">⏱️ 5 minutos</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                </div>
+                <div class="category-content">
+                    <div class="category-body">
+                        <div class="question-format">
+                            <h3>Formato de Pregunta</h3>
+                            <p><strong>Are you within [Distance] of me?</strong></p>
+                        </div>
+
+                        <div class="subcategory">
+                            <h4>📏 Distancias Disponibles</h4>
+                            <div class="item-list">
+                                <div class="question-item" data-category="radar">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">500 m</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                                <div class="question-item" data-category="radar">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">1 km</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                                <div class="question-item" data-category="radar">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">2 km</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                                <div class="question-item" data-category="radar">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">5 km</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                                <div class="question-item" data-category="radar">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">10 km</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                                <div class="question-item" data-category="radar">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">15 km</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                                <div class="question-item" data-category="radar">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">40 km</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                                <div class="question-item" data-category="radar">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">80 km</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                                <div class="question-item" data-category="radar">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">160 km</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Respuesta y notas..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                                <div class="question-item" data-category="radar">
+                                    <div class="question-header">
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        <div class="question-name">CHOOSE (cualquier distancia)</div>
+                                    </div>
+                                    <textarea class="notes-input" placeholder="Distancia elegida y respuesta..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PHOTOS -->
+            <div class="category" data-category="photos">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <div class="category-title-section">
+                        <span class="category-title">6. PHOTOS</span>
+                        <button class="info-icon-btn" onclick="showCategoryHelp(event, 'photos')"
+                                aria-label="Ayuda sobre Photos">
+                            <span class="info-icon">ℹ️</span>
+                        </button>
+                        <span class="question-count"><span class="asked-count">0</span> / <span class="total-count">0</span></span>
+                    </div>
+                    <div class="category-info">
+                        <span class="badge">📝 Draw 1</span>
+                        <span class="badge">⏱️ 10 minutos</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                </div>
+                <div class="category-content">
+                    <div class="category-body">
+                        <div class="question-format">
+                            <h3>Formato de Pregunta</h3>
+                            <p><strong>Send a photo of [Subject].</strong></p>
+                        </div>
+
+                        <div class="subcategory">
+                            <h4>📸 Fotos Disponibles (Juegos Pequeños)</h4>
+                            <div class="photo-grid">
+                                <div class="photo-item" data-category="photos">
+                                    <h5>
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        A Tree
+                                    </h5>
+                                    <p>Must include the entire tree.</p>
+                                    <textarea class="notes-input" placeholder="Notas sobre la foto..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                                <div class="photo-item" data-category="photos">
+                                    <h5>
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        The Sky
+                                    </h5>
+                                    <p>Place phone on ground, shoot directly up.</p>
+                                    <textarea class="notes-input" placeholder="Notas sobre la foto..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                                <div class="photo-item" data-category="photos">
+                                    <h5>
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        You
+                                    </h5>
+                                    <p>Selfie mode. Arm parallel to the ground, fully extended.</p>
+                                    <textarea class="notes-input" placeholder="Notas sobre la foto..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                                <div class="photo-item" data-category="photos">
+                                    <h5>
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        Widest Street
+                                    </h5>
+                                    <p>Must include both sides of the street.</p>
+                                    <textarea class="notes-input" placeholder="Notas sobre la foto..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                                <div class="photo-item" data-category="photos">
+                                    <h5>
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        Tallest Structure in Sightline
+                                    </h5>
+                                    <p>Tallest from your current perspective. Must include top and both sides. Top in top ⅓ of frame.</p>
+                                    <textarea class="notes-input" placeholder="Notas sobre la foto..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                                <div class="photo-item" data-category="photos">
+                                    <h5>
+                                        <input type="checkbox" class="question-checkbox" onchange="updateQuestion(this)">
+                                        Any Building from Station
+                                    </h5>
+                                    <p>Must stand directly outside transit station entrance. Include roof, both sides, top in top ⅓ of frame.</p>
+                                    <textarea class="notes-input" placeholder="Notas sobre la foto..." onchange="saveNotes(this)"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h4>💡 Información General</h4>
+                <p><strong>Reglas importantes:</strong></p>
+                <ul style="margin-left: 20px; margin-top: 10px; line-height: 1.8;">
+                    <li>Las preguntas de Tentacles NO están disponibles en juegos pequeños</li>
+                    <li>Todas las respuestas deben ser verídicas</li>
+                    <li>El escondido tiene el tiempo indicado para responder cada pregunta</li>
+                    <li>Si no se responde en el tiempo límite, el tiempo del escondido se pausa</li>
+                    <li>Las preguntas pueden repetirse pagando el costo dos veces</li>
+                    <li>Los datos se guardan automáticamente en tu navegador</li>
+                </ul>
+            </div>
+        </div>
+
+            </div>
+            <!-- END TAB 1: SEGUIMIENTO -->
+
+            <!-- TAB 2: MANUAL -->
+            <div id="manualTab" class="tab-content" role="tabpanel" aria-labelledby="nav-manual" style="display:none;">
+                <div class="manual-toc-sticky">
+                    <button class="toc-toggle-btn" onclick="toggleTOC()">
+                        📖 Tabla de Contenidos
+                    </button>
+                </div>
+
+                <div id="manualTOC" class="manual-toc">
+                    <nav class="toc-nav">
+                        <a href="#manual-inicio" class="toc-link" onclick="navigateToSection(event, 'inicio')">
+                            1. Guía de Inicio Rápido
+                        </a>
+                        <a href="#manual-configurar" class="toc-link" onclick="navigateToSection(event, 'configurar')">
+                            2. Configurar tu Mapa
+                        </a>
+                        <a href="#manual-buscar" class="toc-link" onclick="navigateToSection(event, 'buscar')">
+                            3. Buscar
+                        </a>
+                        <a href="#manual-esconderse" class="toc-link" onclick="navigateToSection(event, 'esconderse')">
+                            4. Esconderse
+                        </a>
+                        <a href="#manual-consejos" class="toc-link" onclick="navigateToSection(event, 'consejos')">
+                            5. Consejos Generales
+                        </a>
+                        <a href="#manual-experimentales" class="toc-link" onclick="navigateToSection(event, 'experimentales')">
+                            6. Diseños Experimentales
+                        </a>
+                    </nav>
+                </div>
+
+                <div class="manual-content">
+                    <section id="manual-inicio" class="manual-section">
+                        <h2>Guía de Inicio Rápido</h2>
+                        <p>El contenido del manual se cargará dinámicamente...</p>
+                    </section>
+
+                    <section id="manual-configurar" class="manual-section">
+                        <h2>Configurar tu Mapa</h2>
+                        <p>El contenido del manual se cargará dinámicamente...</p>
+                    </section>
+
+                    <section id="manual-buscar" class="manual-section">
+                        <h2>Buscar</h2>
+                        <p>El contenido del manual se cargará dinámicamente...</p>
+                    </section>
+
+                    <section id="manual-esconderse" class="manual-section">
+                        <h2>Esconderse</h2>
+                        <p>El contenido del manual se cargará dinámicamente...</p>
+                    </section>
+
+                    <section id="manual-consejos" class="manual-section">
+                        <h2>Consejos Generales</h2>
+                        <p>El contenido del manual se cargará dinámicamente...</p>
+                    </section>
+
+                    <section id="manual-experimentales" class="manual-section">
+                        <h2>Diseños Experimentales</h2>
+                        <p>El contenido del manual se cargará dinámicamente...</p>
+                    </section>
+                </div>
+            </div>
+            <!-- END TAB 2: MANUAL -->
+
+        </div>
+        <!-- END tabs-container -->
+
+        <footer>
+            <p>Hide and Seek - Investigation Book © 2025</p>
+            <p style="margin-top: 5px; opacity: 0.8;">Edición para Juegos Pequeños</p>
+        </footer>
+    </div>
+
+    <!-- Modal de confirmación -->
+    <div id="resetModal" class="modal">
+        <div class="modal-content">
+            <h2 style="color: #f54242; margin-bottom: 15px;">⚠️ Confirmar Reinicio</h2>
+            <p>¿Estás seguro de que quieres reiniciar todas las preguntas y notas? Esta acción no se puede deshacer.</p>
+            <div class="modal-buttons">
+                <button class="btn" onclick="closeResetModal()">Cancelar</button>
+                <button class="btn btn-danger" onclick="confirmReset()">Reiniciar Todo</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuración de costos por categoría
+        const CARD_COSTS = {
+            matching: { draw: 3, pick: 1 },
+            measuring: { draw: 3, pick: 1 },
+            thermometer: { draw: 2, pick: 1 },
+            radar: { draw: 2, pick: 1 },
+            photos: { draw: 1, pick: 1 }
+        };
+
+        // Agregar iconos de ayuda a todas las preguntas individuales
+        function addHelpIconsToQuestions() {
+            // Procesar cada categoría
+            document.querySelectorAll('.category').forEach(category => {
+                const categoryName = category.dataset.category;
+
+                // Agregar iconos a question-items
+                category.querySelectorAll('.question-item .question-header').forEach(header => {
+                    // Verificar si ya tiene un icono de ayuda
+                    if (!header.querySelector('.info-icon-btn')) {
+                        // Extraer el nombre de la pregunta del elemento .question-name
+                        const questionNameElement = header.querySelector('.question-name');
+                        const questionName = questionNameElement ? questionNameElement.textContent.trim() : '';
+
+                        const helpBtn = document.createElement('button');
+                        helpBtn.className = 'info-icon-btn info-icon-small';
+                        // Pasar tanto categoryName como questionName
+                        helpBtn.setAttribute('onclick', `showQuestionHelp(event, '${categoryName}', '${questionName.replace(/'/g, "\\'")}')`);
+                        helpBtn.setAttribute('aria-label', `Ayuda sobre ${questionName}`);
+                        helpBtn.innerHTML = '<span class="info-icon">ℹ️</span>';
+                        header.appendChild(helpBtn);
+                    }
+                });
+
+                // Agregar iconos a photo-items
+                category.querySelectorAll('.photo-item h5').forEach(h5 => {
+                    // Verificar si ya tiene un icono de ayuda
+                    if (!h5.querySelector('.info-icon-btn')) {
+                        // Extraer el nombre de la foto del h5
+                        const questionName = h5.firstChild ? h5.firstChild.textContent.trim() : '';
+
+                        const helpBtn = document.createElement('button');
+                        helpBtn.className = 'info-icon-btn info-icon-small';
+                        // Pasar tanto categoryName como questionName
+                        helpBtn.setAttribute('onclick', `showQuestionHelp(event, '${categoryName}', '${questionName.replace(/'/g, "\\'")}')`);
+                        helpBtn.setAttribute('aria-label', `Ayuda sobre ${questionName}`);
+                        helpBtn.innerHTML = '<span class="info-icon">ℹ️</span>';
+                        h5.appendChild(helpBtn);
+                    }
+                });
+            });
+        }
+
+        // Cargar datos al iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+            updateAllStats();
+            // Abrir la primera categoría por defecto
+            document.querySelector('.category').classList.add('active');
+            // Agregar iconos de ayuda a todas las preguntas
+            addHelpIconsToQuestions();
+        });
+
+        function toggleCategory(element) {
+            const category = element.parentElement;
+            const isActive = category.classList.contains('active');
+
+            // Cerrar todas las categorías
+            document.querySelectorAll('.category').forEach(cat => {
+                cat.classList.remove('active');
+            });
+
+            // Abrir la categoría clickeada si no estaba activa
+            if (!isActive) {
+                category.classList.add('active');
+            }
+        }
+
+        function updateQuestion(checkbox) {
+            const questionItem = checkbox.closest('.question-item, .photo-item');
+            if (checkbox.checked) {
+                questionItem.classList.add('asked');
+            } else {
+                questionItem.classList.remove('asked');
+            }
+            updateAllStats();
+            saveData();
+        }
+
+        function saveNotes(textarea) {
+            saveData();
+        }
+
+        function updateAllStats() {
+            // Actualizar contadores por categoría
+            document.querySelectorAll('.category').forEach(category => {
+                const categoryName = category.dataset.category;
+                const items = category.querySelectorAll('.question-item, .photo-item');
+                const askedItems = category.querySelectorAll('.question-item.asked, .photo-item.asked');
+
+                const askedCount = category.querySelector('.asked-count');
+                const totalCount = category.querySelector('.total-count');
+
+                if (askedCount && totalCount) {
+                    askedCount.textContent = askedItems.length;
+                    totalCount.textContent = items.length;
+                }
+            });
+
+            // Actualizar estadísticas globales
+            const allItems = document.querySelectorAll('.question-item, .photo-item');
+            const askedItems = document.querySelectorAll('.question-item.asked, .photo-item.asked');
+
+            document.getElementById('totalQuestions').textContent = askedItems.length;
+
+            // Calcular cartas totales
+            let totalDraw = 0;
+            let totalPick = 0;
+
+            document.querySelectorAll('.question-item.asked, .photo-item.asked').forEach(item => {
+                const category = item.dataset.category;
+                if (CARD_COSTS[category]) {
+                    totalDraw += CARD_COSTS[category].draw;
+                    totalPick += CARD_COSTS[category].pick;
+                }
+            });
+
+            document.getElementById('totalCards').textContent = `${totalPick} / ${totalDraw}`;
+        }
+
+        function saveData() {
+            const data = {
+                questions: [],
+                timestamp: new Date().toISOString()
+            };
+
+            document.querySelectorAll('.question-item, .photo-item').forEach((item, index) => {
+                const checkbox = item.querySelector('.question-checkbox');
+                const textarea = item.querySelector('.notes-input');
+                const name = item.querySelector('.question-name')?.textContent ||
+                            item.querySelector('h5')?.textContent.trim();
+                const category = item.dataset.category;
+
+                data.questions.push({
+                    index,
+                    name,
+                    category,
+                    asked: checkbox.checked,
+                    notes: textarea.value
+                });
+            });
+
+            localStorage.setItem('hideAndSeekData', JSON.stringify(data));
+        }
+
+        function loadData() {
+            const saved = localStorage.getItem('hideAndSeekData');
+            if (!saved) return;
+
+            try {
+                const data = JSON.parse(saved);
+                const items = document.querySelectorAll('.question-item, .photo-item');
+
+                data.questions.forEach(savedQuestion => {
+                    if (savedQuestion.index < items.length) {
+                        const item = items[savedQuestion.index];
+                        const checkbox = item.querySelector('.question-checkbox');
+                        const textarea = item.querySelector('.notes-input');
+
+                        if (checkbox) checkbox.checked = savedQuestion.asked;
+                        if (textarea) textarea.value = savedQuestion.notes || '';
+                        if (savedQuestion.asked) {
+                            item.classList.add('asked');
+                        }
+                    }
+                });
+            } catch (e) {
+                console.error('Error loading data:', e);
+            }
+        }
+
+        function showResetModal() {
+            document.getElementById('resetModal').classList.add('show');
+        }
+
+        function closeResetModal() {
+            document.getElementById('resetModal').classList.remove('show');
+        }
+
+        function confirmReset() {
+            // Limpiar todas las preguntas
+            document.querySelectorAll('.question-checkbox').forEach(cb => {
+                cb.checked = false;
+            });
+
+            document.querySelectorAll('.notes-input').forEach(ta => {
+                ta.value = '';
+            });
+
+            document.querySelectorAll('.question-item, .photo-item').forEach(item => {
+                item.classList.remove('asked');
+            });
+
+            // Limpiar localStorage
+            localStorage.removeItem('hideAndSeekData');
+
+            // Actualizar estadísticas
+            updateAllStats();
+
+            // Cerrar modal
+            closeResetModal();
+        }
+
+        function exportData() {
+            const data = localStorage.getItem('hideAndSeekData');
+            if (!data) {
+                alert('No hay datos para exportar');
+                return;
+            }
+
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `hide-and-seek-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function importData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'application/json';
+
+            input.onchange = e => {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+
+                reader.onload = event => {
+                    try {
+                        const data = JSON.parse(event.target.result);
+                        localStorage.setItem('hideAndSeekData', JSON.stringify(data));
+                        loadData();
+                        updateAllStats();
+                        alert('Datos importados correctamente');
+                    } catch (error) {
+                        alert('Error al importar los datos');
+                    }
+                };
+
+                reader.readAsText(file);
+            };
+
+            input.click();
+        }
+
+        // Cerrar modal al hacer clic fuera
+        window.onclick = function(event) {
+            const modal = document.getElementById('resetModal');
+            if (event.target === modal) {
+                closeResetModal();
+            }
+        }
+
+        // ========== NUEVO CÓDIGO PARA TABS, AYUDA Y NAVEGACIÓN ==========
+
+        // Contenido de ayuda por categoría Y por pregunta individual
+        const HELP_CONTENT = {
+            matching: {
+                category: {
+                    title: 'Preguntas de Matching',
+                    format: 'Is your nearest _______ the same as my nearest _______?',
+                    timeLimit: '5 minutos',
+                    cardCost: 'Roba 3, Quédate 1',
+                    tips: [
+                        'Útiles en cualquier punto del juego',
+                        'Requieren que los buscadores se muevan para optimizar eficacia',
+                        'Si las ubicaciones están fuera del mapa, se consideran inexistentes'
+                    ],
+                    examples: [
+                        'Aeropuertos comerciales, estaciones de tren',
+                        'Divisiones administrativas',
+                        'Elementos naturales (montañas, parques)',
+                        'Lugares de interés (museos, hospitales)'
+                    ],
+                    important: 'Las respuestas válidas son SÍ o NO'
+                },
+                questions: {
+                    'Commercial Airport': {
+                        hint: 'Un aeropuerto se considera comercial si puedes ver vuelos desde/hacia él en Google Flights',
+                        details: 'Si hay alguna ambigüedad, un aeropuerto se considera comercial si puedes ver vuelos desde/hacia él a través de Google Flights (flights.google.com).',
+                        tips: ['Verifica en Google Flights (flights.google.com)', 'Los aeropuertos privados NO cuentan', 'Debe tener vuelos comerciales programados']
+                    },
+                    'Transit Line': {
+                        hint: 'Debes estar EN el transporte y DEBE ESTAR EN MOVIMIENTO',
+                        details: 'Importante: Para hacer esta pregunta, los buscadores deben estar en la forma de transporte, y debe estar en movimiento. La respuesta es sí si el transporte que los buscadores están usando actualmente se detendría en la estación del escondido.',
+                        tips: ['Haz captura de pantalla de todas las paradas de tu línea', 'Solo cuenta si tu tren SE DETIENE en esa estación', 'Trenes express que pasan pero no paran = NO']
+                    },
+                    "Station's Name Length": {
+                        hint: 'Número de caracteres - guiones y espacios cuentan',
+                        details: 'Número de caracteres (guiones y espacios cuentan) en la estación, según lo definido por tu aplicación de mapas. Si la aplicación incluye la palabra "estación", eso cuenta.',
+                        tips: ['Cuenta TODOS los caracteres incluyendo espacios', 'Los guiones también cuentan', 'Si aparece "Estación" en el nombre del mapa, cuenta']
+                    },
+                    'Street or Path': {
+                        hint: 'Una calle termina cuando cambia de nombre',
+                        details: 'Se considera que una calle o camino ha terminado cuando adquiere un nombre diferente. Esto incluye cambiar de "Jet Lag St. Este" a "Jet Lag St. Oeste". Si la calle no tiene nombre, se considera que comienza o termina donde tiene una intersección.',
+                        tips: ['Cambios de Este/Oeste/Norte/Sur cuentan como nombres diferentes', 'Calles sin nombre terminan en intersecciones']
+                    },
+                    '1st Admin. Division': {
+                        hint: 'La categoría formal más grande de división administrativa',
+                        details: 'Esta es la categoría formal más grande de división. Para España, serían comunidades autónomas. En EE.UU., estados. En Suiza, cantones. En Japón, prefecturas.',
+                        tips: ['España: Comunidades autónomas', 'EE.UU.: Estados', 'Suiza: Cantones', 'Japón: Prefecturas']
+                    },
+                    '2nd Admin. Division': {
+                        hint: 'Un nivel más detallado que la primera división',
+                        details: 'Un nivel de división más detallado. En España, esto es provincias. En EE.UU., condados. En Suiza, distritos. En Japón, subprefecturas.',
+                        tips: ['España: Provincias', 'EE.UU.: Condados', 'Suiza: Distritos']
+                    },
+                    '3rd Admin. Division': {
+                        hint: 'Nivel de municipalidad en la mayoría de países',
+                        details: 'Un nivel más abajo. En España, EE.UU., Suiza y Japón, esto sería municipalidad. Los límites pueden ser ambiguos, los buscadores deben aclarar al preguntar.',
+                        tips: ['Típicamente es la municipalidad', 'Los límites pueden ser ambiguos']
+                    },
+                    '4th Admin. Division': {
+                        hint: 'Distritos dentro de ciudades grandes',
+                        details: 'Algunos lugares no tienen una cuarta división administrativa, pero muchas ciudades más grandes sí. Nueva York tiene distritos, Madrid tiene distritos, Tokio tiene distritos especiales.',
+                        tips: ['No todos los lugares tienen 4ta división', 'Ciudades grandes típicamente tienen distritos']
+                    },
+                    'Mountain': {
+                        hint: 'Cualquier cosa clasificada como montaña por tu app de mapas',
+                        details: 'Cualquier cosa clasificada correctamente como una montaña por tu aplicación de mapas. Mide la distancia desde el icono del mapa.',
+                        tips: ['Verifica la clasificación en la app de mapas', 'Mide desde el icono, no desde la base', 'Las colinas generalmente NO cuentan']
+                    },
+                    'Landmass': {
+                        hint: 'Área de tierra no dividida por vías fluviales',
+                        details: 'Un área de tierra en una pieza, no dividida por una vía fluvial. Si el escondido está en una masa de tierra completamente rodeada por la masa donde están los buscadores, cuenta como coincidencia.',
+                        tips: ['Tierra no dividida por ríos', 'Islas completamente rodeadas cuentan como parte de la masa continental', 'Sé razonable con interpretaciones']
+                    },
+                    'Park': {
+                        hint: 'Cualquier cosa clasificada como parque por tu app',
+                        details: 'Cualquier cosa clasificada correctamente como un parque por tu aplicación de mapas. Mide desde el icono del mapa. Esto puede producir resultados contraintuitivos en parques grandes.',
+                        tips: ['Siempre mide al icono del mapa', 'Puede producir resultados extraños en parques grandes', 'Este sistema es el más objetivo']
+                    },
+                    'Amusement Park': {
+                        hint: 'Categorizado como parque de atracciones',
+                        details: 'Cualquier cosa categorizada correctamente como un parque de atracciones por tu aplicación de mapas. Mide desde el icono del mapa.',
+                        tips: ['Debe estar categorizado como "Parque de Atracciones"', 'Mide desde el icono']
+                    },
+                    'Zoo': {
+                        hint: 'Categorizado como zoológico',
+                        details: 'Cualquier cosa categorizada correctamente como un zoológico por tu aplicación de mapas. Mide desde el icono del mapa.',
+                        tips: ['Debe estar categorizado como "Zoológico"', 'Mide desde el icono']
+                    },
+                    'Aquarium': {
+                        hint: 'Categorizado como acuario',
+                        details: 'Cualquier cosa categorizada correctamente como un acuario por tu aplicación de mapas. Mide desde el icono del mapa.',
+                        tips: ['Debe estar categorizado como "Acuario"', 'Mide desde el icono']
+                    },
+                    'Golf Course': {
+                        hint: 'Campo de golf al aire libre - minigolf NO cuenta',
+                        details: 'Un campo de golf al aire libre. El minigolf no cuenta. Los campos de práctica no cuentan. Mide desde el icono del mapa.',
+                        tips: ['Solo campos de golf de tamaño completo', 'Minigolf NO cuenta', 'Campos de práctica NO cuentan']
+                    },
+                    'Museum': {
+                        hint: 'Categorizado como museo',
+                        details: 'Cualquier cosa categorizada correctamente como un museo por tu aplicación de mapas. Mide desde el icono del mapa.',
+                        tips: ['Debe estar categorizado como "Museo"', 'Mide desde el icono']
+                    },
+                    'Movie Theater': {
+                        hint: 'Categorizado como cine',
+                        details: 'Cualquier cosa categorizada correctamente como un cine por tu aplicación de mapas. Mide desde el icono del mapa.',
+                        tips: ['Debe estar categorizado como "Cine"', 'Mide desde el icono']
+                    },
+                    'Hospital': {
+                        hint: 'Categorizado como hospital',
+                        details: 'Cualquier cosa categorizada correctamente como un hospital por tu aplicación de mapas. Mide desde el icono del mapa.',
+                        tips: ['Debe estar categorizado como "Hospital"', 'Mide desde el icono']
+                    },
+                    'Library': {
+                        hint: 'Categorizada como biblioteca',
+                        details: 'Cualquier cosa categorizada correctamente como una biblioteca por tu aplicación de mapas. Mide desde el icono del mapa.',
+                        tips: ['Debe estar categorizada como "Biblioteca"', 'Mide desde el icono']
+                    },
+                    'Foreign Consulate': {
+                        hint: 'Consulado extranjero - NO honorarios',
+                        details: 'Cualquier cosa categorizada correctamente como un consulado extranjero por tu aplicación de mapas. Excluye consulados honorarios. Mide desde el icono del mapa.',
+                        tips: ['Consulados honorarios NO cuentan', 'Solo consulados oficiales', 'Mide desde el icono']
+                    }
+                }
+            },
+            measuring: {
+                category: {
+                    title: 'Preguntas de Medición',
+                    format: 'Compared to me, are you closer to or further from _______?',
+                    timeLimit: '5 minutos',
+                    cardCost: 'Roba 3, Quédate 1',
+                    tips: [
+                        'Buenas para cortar el mapa de formas únicas',
+                        'Funcionan con fronteras, transporte, elementos naturales'
+                    ],
+                    important: 'Las respuestas válidas son MÁS CERCA o MÁS LEJOS'
+                },
+                questions: {
+                    'A Commercial Airport': {
+                        hint: 'Aeropuerto comercial - verifica en Google Flights',
+                        details: 'Si hay alguna ambigüedad, un aeropuerto se considera comercial si puedes ver vuelos desde/hacia él en Google Flights (flights.google.com). Mide al icono.',
+                        tips: ['Verifica en Google Flights', 'Los aeropuertos privados NO cuentan', 'Compara distancias al icono']
+                    },
+                    'A High Speed Train Line': {
+                        hint: 'Línea de tren de alta velocidad más cercana',
+                        details: 'La línea de tren de alta velocidad más cercana según tu app. Mide en línea recta a la línea ferroviaria, no a la estación.',
+                        tips: ['Solo trenes de alta velocidad (AVE, TGV, etc.)', 'Mide a la línea, no a la estación', 'Trenes regionales NO cuentan']
+                    },
+                    'A Rail Station': {
+                        hint: 'Cualquier estación de tren o metro',
+                        details: 'Cualquier estación de transporte ferroviario según tu app. Incluye metro, tren ligero, tren suburbano. Mide desde el icono.',
+                        tips: ['Metro, tren ligero cuentan', 'Mide desde el icono', 'Paradas de autobús NO cuentan']
+                    },
+                    'An International Border': {
+                        hint: 'Frontera entre dos países',
+                        details: 'La frontera internacional más cercana. Mide la distancia perpendicular más corta a la línea fronteriza.',
+                        tips: ['Frontera entre dos países soberanos', 'Mide perpendicular a la línea']
+                    },
+                    'A 1st Admin. Div. Border': {
+                        hint: 'Frontera de la división administrativa más grande',
+                        details: 'Frontera de la primera división administrativa (comunidad autónoma, estado, cantón). Mide perpendicular a la línea fronteriza.',
+                        tips: ['España: Frontera entre comunidades', 'EE.UU.: Frontera entre estados']
+                    },
+                    'A 2nd Admin. Div. Border': {
+                        hint: 'Frontera de la segunda división administrativa',
+                        details: 'Frontera de la segunda división (provincia, condado, distrito). Mide perpendicular a la línea fronteriza.',
+                        tips: ['España: Frontera entre provincias', 'EE.UU.: Frontera entre condados']
+                    },
+                    'Sea Level': {
+                        hint: 'Nivel del mar (elevación cero)',
+                        details: 'Nivel del mar - elevación de 0 metros. Mide tu distancia vertical (elevación) respecto al nivel del mar.',
+                        tips: ['Usa la elevación en tu app', 'Distancia vertical, no horizontal', 'Puede ser negativa']
+                    },
+                    'A Body of Water': {
+                        hint: 'Cualquier masa de agua en el mapa',
+                        details: 'Cualquier cuerpo de agua clasificado como tal en tu app (lago, río, océano, mar). Mide desde el punto más cercano del agua.',
+                        tips: ['Lagos, ríos, océanos cuentan', 'Mide al punto más cercano']
+                    },
+                    'A Coastline': {
+                        hint: 'Línea donde la tierra se encuentra con el mar',
+                        details: 'La costa más cercana - donde la tierra se encuentra con el mar u océano. Mide desde el punto más cercano de la costa.',
+                        tips: ['Solo costa marítima (océano/mar)', 'Lagos NO cuentan']
+                    },
+                    'A Mountain': {
+                        hint: 'Cualquier cosa clasificada como montaña',
+                        details: 'Cualquier cosa clasificada correctamente como una montaña por tu app. Mide desde el icono del mapa.',
+                        tips: ['Verifica la clasificación', 'Mide desde el icono', 'Colinas generalmente NO cuentan']
+                    },
+                    'A Park': {
+                        hint: 'Cualquier cosa clasificada como parque',
+                        details: 'Cualquier cosa clasificada correctamente como un parque por tu app. Mide desde el icono del mapa.',
+                        tips: ['Siempre mide al icono', 'Puede producir resultados contraintuitivos']
+                    },
+                    'An Amusement Park': {
+                        hint: 'Categorizado como parque de atracciones',
+                        details: 'Cualquier cosa categorizada correctamente como parque de atracciones por tu app. Mide desde el icono.',
+                        tips: ['Debe estar categorizado correctamente', 'Mide desde el icono']
+                    },
+                    'A Zoo': {
+                        hint: 'Categorizado como zoológico',
+                        details: 'Cualquier cosa categorizada correctamente como zoológico por tu app. Mide desde el icono.',
+                        tips: ['Debe estar categorizado correctamente', 'Mide desde el icono']
+                    },
+                    'An Aquarium': {
+                        hint: 'Categorizado como acuario',
+                        details: 'Cualquier cosa categorizada correctamente como acuario por tu app. Mide desde el icono.',
+                        tips: ['Debe estar categorizado correctamente', 'Mide desde el icono']
+                    },
+                    'A Golf Course': {
+                        hint: 'Campo de golf al aire libre - minigolf NO',
+                        details: 'Un campo de golf al aire libre. El minigolf no cuenta. Los campos de práctica no cuentan. Mide desde el icono.',
+                        tips: ['Solo campos de golf completos', 'Minigolf NO cuenta']
+                    },
+                    'A Museum': {
+                        hint: 'Categorizado como museo',
+                        details: 'Cualquier cosa categorizada correctamente como museo por tu app. Mide desde el icono.',
+                        tips: ['Debe estar categorizado correctamente', 'Mide desde el icono']
+                    },
+                    'A Movie Theater': {
+                        hint: 'Categorizado como cine',
+                        details: 'Cualquier cosa categorizada correctamente como cine por tu app. Mide desde el icono.',
+                        tips: ['Debe estar categorizado correctamente', 'Mide desde el icono']
+                    },
+                    'A Hospital': {
+                        hint: 'Categorizado como hospital',
+                        details: 'Cualquier cosa categorizada correctamente como hospital por tu app. Mide desde el icono.',
+                        tips: ['Debe estar categorizado correctamente', 'Mide desde el icono']
+                    },
+                    'A Library': {
+                        hint: 'Categorizada como biblioteca',
+                        details: 'Cualquier cosa categorizada correctamente como biblioteca por tu app. Mide desde el icono.',
+                        tips: ['Debe estar categorizada correctamente', 'Mide desde el icono']
+                    },
+                    'A Foreign Consulate': {
+                        hint: 'Consulado extranjero - NO honorarios',
+                        details: 'Cualquier cosa categorizada correctamente como consulado extranjero por tu app. Excluye consulados honorarios. Mide desde el icono.',
+                        tips: ['Consulados honorarios NO cuentan', 'Solo consulados oficiales']
+                    }
+                }
+            },
+            thermometer: {
+                category: {
+                    title: 'Preguntas de Termómetro',
+                    format: "I've just traveled [Distance]. Am I hotter or colder?",
+                    timeLimit: '5 minutos',
+                    cardCost: 'Roba 2, Quédate 1',
+                    distances: ['1 km', '5 km'],
+                    tips: [
+                        'Envía tu ubicación inicial antes de moverte',
+                        'Si la nueva ubicación está más cerca: MÁS CALIENTE',
+                        'Si está más lejos: MÁS FRÍO'
+                    ],
+                    important: 'La distancia se mide en línea recta'
+                },
+                questions: {
+                    '1 km': {
+                        hint: 'Viaja 1 km en línea recta desde tu ubicación inicial',
+                        details: 'Debes informar al escondido que estás comenzando un termómetro y enviarle tu ubicación actual. Luego, después de viajar al menos 1 km medido en línea recta, envías tu nueva ubicación. Si estás más cerca del escondido, MÁS CALIENTE. De lo contrario, MÁS FRÍO.',
+                        tips: ['Envía ubicación inicial ANTES de moverte', 'Mínimo 1 km en línea recta', 'Más cerca = MÁS CALIENTE', 'Más lejos = MÁS FRÍO']
+                    },
+                    '5 km': {
+                        hint: 'Viaja 5 km en línea recta desde tu ubicación inicial',
+                        details: 'Debes informar al escondido que estás comenzando un termómetro y enviarle tu ubicación actual. Luego, después de viajar al menos 5 km medido en línea recta, envías tu nueva ubicación. Si estás más cerca del escondido, MÁS CALIENTE. De lo contrario, MÁS FRÍO.',
+                        tips: ['Envía ubicación inicial ANTES de moverte', 'Mínimo 5 km en línea recta', 'Más cerca = MÁS CALIENTE', 'Más lejos = MÁS FRÍO']
+                    }
+                }
+            },
+            radar: {
+                category: {
+                    title: 'Preguntas de Radar',
+                    format: 'Are you within [Distance] of me?',
+                    timeLimit: '5 minutos',
+                    cardCost: 'Roba 2, Quédate 1',
+                    distances: ['500m', '1km', '2km', '5km', '10km', '15km', '40km', '80km', '160km', 'ELEGIR'],
+                    tips: [
+                        'Verifican si estás en el área general correcta',
+                        'Útiles para tachar partes densas del mapa',
+                        'Se refieren a tu UBICACIÓN, no a tu zona'
+                    ],
+                    important: 'Las respuestas válidas son SÍ o NO'
+                },
+                questions: {
+                    '500 m': {
+                        hint: '¿Estás dentro de 500 metros de mí?',
+                        details: '¿Estás dentro de 500 metros de mí? Mide desde tu ubicación ACTUAL, no tu zona de escondite. La distancia se mide en línea recta.',
+                        tips: ['Mide desde ubicación ACTUAL', 'No desde zona de escondite', 'Radio de 500 metros']
+                    },
+                    '1 km': {
+                        hint: '¿Estás dentro de 1 km de mí?',
+                        details: '¿Estás dentro de 1 km de mí? Mide desde tu ubicación ACTUAL, no tu zona de escondite. La distancia se mide en línea recta.',
+                        tips: ['Mide desde ubicación ACTUAL', 'No desde zona de escondite', 'Radio de 1 kilómetro']
+                    },
+                    '2 km': {
+                        hint: '¿Estás dentro de 2 km de mí?',
+                        details: '¿Estás dentro de 2 km de mí? Mide desde tu ubicación ACTUAL, no tu zona de escondite. La distancia se mide en línea recta.',
+                        tips: ['Mide desde ubicación ACTUAL', 'No desde zona de escondite', 'Radio de 2 kilómetros']
+                    },
+                    '5 km': {
+                        hint: '¿Estás dentro de 5 km de mí?',
+                        details: '¿Estás dentro de 5 km de mí? Mide desde tu ubicación ACTUAL, no tu zona de escondite. La distancia se mide en línea recta.',
+                        tips: ['Mide desde ubicación ACTUAL', 'No desde zona de escondite', 'Radio de 5 kilómetros']
+                    },
+                    '10 km': {
+                        hint: '¿Estás dentro de 10 km de mí?',
+                        details: '¿Estás dentro de 10 km de mí? Mide desde tu ubicación ACTUAL, no tu zona de escondite. La distancia se mide en línea recta.',
+                        tips: ['Mide desde ubicación ACTUAL', 'No desde zona de escondite', 'Radio de 10 kilómetros']
+                    },
+                    '15 km': {
+                        hint: '¿Estás dentro de 15 km de mí?',
+                        details: '¿Estás dentro de 15 km de mí? Mide desde tu ubicación ACTUAL, no tu zona de escondite. La distancia se mide en línea recta.',
+                        tips: ['Mide desde ubicación ACTUAL', 'No desde zona de escondite', 'Radio de 15 kilómetros']
+                    },
+                    '40 km': {
+                        hint: '¿Estás dentro de 40 km de mí?',
+                        details: '¿Estás dentro de 40 km de mí? Mide desde tu ubicación ACTUAL, no tu zona de escondite. La distancia se mide en línea recta.',
+                        tips: ['Mide desde ubicación ACTUAL', 'No desde zona de escondite', 'Radio de 40 kilómetros']
+                    },
+                    '80 km': {
+                        hint: '¿Estás dentro de 80 km de mí?',
+                        details: '¿Estás dentro de 80 km de mí? Mide desde tu ubicación ACTUAL, no tu zona de escondite. La distancia se mide en línea recta.',
+                        tips: ['Mide desde ubicación ACTUAL', 'No desde zona de escondite', 'Radio de 80 kilómetros']
+                    },
+                    '160 km': {
+                        hint: '¿Estás dentro de 160 km de mí?',
+                        details: '¿Estás dentro de 160 km de mí? Mide desde tu ubicación ACTUAL, no tu zona de escondite. La distancia se mide en línea recta.',
+                        tips: ['Mide desde ubicación ACTUAL', 'No desde zona de escondite', 'Radio de 160 kilómetros']
+                    },
+                    'CHOOSE (cualquier distancia)': {
+                        hint: 'Puedes elegir cualquier distancia que desees',
+                        details: 'Puedes elegir cualquier distancia. Especifica la distancia al hacer la pregunta. El escondido responde si estás dentro de esa distancia de su ubicación ACTUAL en línea recta.',
+                        tips: ['Especifica la distancia al preguntar', 'Puede ser cualquier distancia', 'Útil para distancias no estándar']
+                    }
+                }
+            },
+            photos: {
+                category: {
+                    title: 'Preguntas de Fotos',
+                    format: 'Send a photo of [Subject].',
+                    timeLimit: '10 minutos (¡más tiempo!)',
+                    cardCost: 'Roba 1, Quédate 1',
+                    subjects: [
+                        'Un árbol (completo)',
+                        'El cielo (teléfono en el suelo)',
+                        'Tú (selfie, brazo extendido)',
+                        'Calle más ancha',
+                        'Estructura más alta',
+                        'Edificio desde estación'
+                    ],
+                    tips: [
+                        'Cada foto tiene requisitos específicos',
+                        'NO uses Google Street View'
+                    ],
+                    important: '"No puedo responder" es válido si no es posible'
+                },
+                questions: {
+                    'A Tree': {
+                        hint: 'Debe incluir el árbol completo',
+                        details: 'Debe incluir el árbol completo. La foto debe mostrar desde la base hasta la copa del árbol. Usa la lente predeterminada de tu teléfono sin zoom.',
+                        tips: ['Árbol completo de base a copa', 'No uses zoom', 'Lente predeterminada del teléfono']
+                    },
+                    'The Sky': {
+                        hint: 'Coloca el teléfono en el suelo, dispara directamente hacia arriba',
+                        details: 'Coloca el teléfono en el suelo, dispara directamente hacia arriba usando la lente predeterminada sin zoom. El teléfono debe estar completamente plano en el suelo.',
+                        tips: ['Teléfono plano en el suelo', 'Dispara directamente hacia arriba (90 grados)', 'No uses zoom']
+                    },
+                    'You': {
+                        hint: 'Modo selfie, brazo completamente extendido',
+                        details: 'Modo selfie. Teléfono perpendicular al suelo, brazo completamente extendido, usando la lente predeterminada sin zoom. El brazo debe estar paralelo al suelo.',
+                        tips: ['Modo selfie con cámara frontal', 'Brazo completamente extendido', 'Brazo paralelo al suelo', 'No uses zoom']
+                    },
+                    'Widest Street': {
+                        hint: 'Debe incluir ambos lados de la calle',
+                        details: 'Debe incluir ambos lados de la calle; no tiene que incluir el fondo. La calle más ancha desde tu perspectiva. Toma la foto desde un lado capturando ambos bordes.',
+                        tips: ['Ambos lados de la calle visibles', 'No necesita incluir el horizonte', 'La calle más ancha desde tu ubicación']
+                    },
+                    'Tallest Structure in Sightline': {
+                        hint: 'Más alta desde tu perspectiva - debe incluir parte superior y ambos lados',
+                        details: 'El edificio más alto desde tu perspectiva, no el objetivamente más alto. Debe incluir la parte superior y ambos lados. La parte superior debe estar en el tercio superior del marco.',
+                        tips: ['Más alta desde TU perspectiva', 'Debe incluir parte superior y ambos lados', 'Parte superior en tercio superior del marco']
+                    },
+                    'Any Building from Station': {
+                        hint: 'Debe estar directamente afuera de una entrada de la estación',
+                        details: 'Debe estar directamente afuera de una entrada de la estación. Si hay múltiples entradas, puedes elegir. Debe incluir techo y ambos lados, con la parte superior en el tercio superior del marco.',
+                        tips: ['Párate directamente afuera de la entrada', 'Si hay varias entradas, elige una', 'Debe incluir techo y ambos lados']
+                    }
+                }
+            }
+        };
+
+        // Contenido del manual completo
+        const MANUAL_CONTENT = `# HIDE+SEEK
+## Edición Juego Pequeño
+
+## SECCIÓN 1: GUÍA DE INICIO RÁPIDO
+
+### DESCRIPCIÓN GENERAL
+
+¡Bienvenido a *Hide And Seek!* Vamos al grano: este es un libro de reglas largo. Pero prometemos que en última instancia, este juego es bastante simple. El juego básico se puede resumir en cinco pasos:
+
+1. Un jugador usa **transporte público** para llegar a un **lugar de escondite**.
+
+2. Los otros jugadores trabajan juntos para encontrarlo **haciendo preguntas** sobre su ubicación, elegidas de nuestras **seis categorías de preguntas**.
+
+3. Cada vez que el escondido responde una pregunta, roba cartas del **mazo del escondido**. Estas cartas le dan ventajas en el juego.
+
+4. Una vez que el escondido es encontrado por los buscadores, otro jugador se esconde.
+
+5. Al final, **quien se haya escondido más tiempo gana**.
+
+Si bien la estructura general es simple, hay un poco más que necesitarás saber antes de jugar. Comenzando con:
+
+### TAMAÑO DEL JUEGO
+
+Este manual está diseñado para juegos **pequeños** de *Hide and Seek*. Un juego pequeño abarca una sola ciudad, ciudad pequeña o porción de una ciudad grande, y dura típicamente 4-8 horas.
+
+**Ejemplos de juegos pequeños:** Lower Manhattan; Winston-Salem, NC; el centro de Barcelona; Salamanca.
+
+La decisión principal que deberá tomarse en relación con la duración del juego es si deseas agregar **rondas adicionales**. En la configuración más simple del juego, cada jugador/equipo se esconde una sola vez: una vez que todos han tenido la oportunidad de esconderse, el tiempo de escondite más largo gana. **Consideramos que esconderse una vez por jugador es la versión predeterminada del juego**, y es lo que recomendamos a menos que estés dispuesto a dedicar significativamente más tiempo a jugar.
+
+### CREAR EQUIPOS
+
+En general, **no recomendamos jugar con más de cuatro jugadores**. Si deseas jugar con más de cuatro jugadores, sugerimos agrupar algunos jugadores en equipos. Estos equipos (de dos o más) podrían actuar efectivamente como un solo jugador, todos escondiéndose juntos cuando sea su turno de esconderse.
+
+### CONFIGURAR TU MAPA
+
+Después de haber reunido a tus jugadores, necesitarás configurar tu mapa de juego. Esto implica elegir un **sistema de transporte** y establecer **bordes del mapa**.
+
+### INICIO DE RONDA
+
+Al comienzo de cada ronda, un jugador/equipo se convertirá en el escondido, mientras que los jugadores restantes se unirán para jugar como buscadores de esa ronda. El orden en que cada jugador se esconde debe determinarse, al azar, antes de que comience el juego.
+
+Cada ronda comienza con un **período de escondite de 30 minutos**. Durante este tiempo, el escondido puede usar sus piernas y el transporte público para viajar a cualquier estación de transporte dentro de los límites del mapa.
+
+### ZONAS DE ESCONDITE
+
+Al final del período de escondite, el escondido debe estar en una estación/parada de transporte que esté incluida en el mapa del juego; esto ahora actúa como el centro de su zona de escondite. La zona de escondite se extiende **500 metros** en todas las direcciones desde la estación de transporte.
+
+### HACER PREGUNTAS
+
+Para recopilar información sobre la ubicación del escondido, los buscadores tendrán que hacer preguntas del **libro de investigación**. Estas preguntas se pueden hacer en cualquier momento, siempre que se haya respondido la pregunta anterior, y deben ser respondidas con sinceridad por el escondido dentro de 5 minutos.
+
+### EL MAZO DEL ESCONDIDO
+
+El mazo del escondido contiene tres tipos de cartas que el escondido puede usar a su favor: **cartas de bonificación de tiempo, cartas de potenciador y cartas de maldición**.
+
+### EL FINAL DEL JUEGO
+
+Una vez que los buscadores han entrado en la zona de escondite del escondido, y ya no están en un modo de transporte, comenzará el **final del juego**. En este punto, el escondido ya no puede moverse libremente; debe permanecer en un **lugar de escondite** de acceso público hasta que sea encontrado.
+
+### ROTACIÓN DE RONDAS
+
+El escondido se considera encontrado una vez que los buscadores están **dentro de 2 metros de ellos y los han visto**.
+
+---
+
+## SECCIÓN 2: CONFIGURAR TU MAPA
+
+### ELEGIR UN SISTEMA DE TRANSPORTE
+
+Tu sistema de transporte local es la columna vertebral de *Hide and Seek*. Si bien este juego se puede jugar con coches o a pie, **recomendamos encarecidamente usar transporte público para este juego**.
+
+Para juegos pequeños, recomendamos **30-100 estaciones** en un área de aproximadamente **25-250 km²**.
+
+También es extremadamente importante **asegurar que todos los jugadores se sientan seguros yendo a todas las áreas del mapa**.
+
+### ESTABLECER BORDES DEL MAPA
+
+Después de haber determinado los bordes de tu sistema de transporte, necesitarás establecer un conjunto de bordes definitivos para el mapa de tu juego. **Es crucial que todos los jugadores estén usando exactamente el mismo conjunto de bordes**.
+
+### CONSIDERACIONES FINALES
+
+Generalmente, *Hide and Seek* termina una vez que se completa el número predeterminado de rondas. Si, sin embargo, juegas con un límite de tiempo estricto, también recomendaríamos configurar un temporizador de fin de juego.
+
+---
+
+## SECCIÓN 3: BUSCAR
+
+Como buscador, tu trabajo es moverte y recopilar información de la manera más eficiente posible. A tu disposición hay 80 preguntas, que puedes hacer al escondido en cualquier momento.
+
+Para facilitar la revisión de estas preguntas, **las hemos dividido en seis categorías simples**. Todas las preguntas en la misma categoría cuestan el mismo número de cartas y comparten la misma estructura de oración.
+
+Puedes usar Internet para investigar, pero **no puedes usar Google Street View**. Hemos encontrado que Street View es demasiado poderoso cuando se trata de hacer coincidir fotos.
+
+### UNA NOTA SOBRE LAS APLICACIONES DE MAPAS
+
+Jugar fácilmente este juego requerirá usar una aplicación de mapas en tu teléfono inteligente u otro dispositivo. **Recomendamos que uses Google Maps para jugar este juego**. Diseñamos el juego y nuestras categorías de preguntas teniendo en cuenta Google Maps.
+
+#### SI ESTÁS USANDO GOOGLE MAPS:
+
+En cualquier lugar con 5 o más reseñas de Google se asume que es legítimo, a menos que todos los jugadores puedan estar de acuerdo de otra manera.
+
+### PREGUNTAS DE COINCIDENCIA
+
+Las preguntas de coincidencia siguen el formato: "¿Es tu _____ más cercano/a el/la mismo/a que mi _____?" Las respuestas válidas son **sí** o **no**. Los escondidos tienen cinco minutos para responder.
+
+Después de que se haya respondido una pregunta de coincidencia, el escondido puede **robar 3 cartas y quedarse con 1**.
+
+### PREGUNTAS DE MEDICIÓN
+
+Las preguntas de medición siguen el formato: "comparado conmigo, ¿estás más cerca o más lejos de _____?" Las respuestas válidas son **más cerca** o **más lejos**. Los escondidos tienen cinco minutos para responder.
+
+Después de que se haya respondido una pregunta de medición, el escondido puede **robar 3 cartas y quedarse con 1**.
+
+### PREGUNTAS DE RADAR
+
+Las preguntas de radar siguen el formato: "¿Estás dentro de _____ de mí?" Las respuestas válidas son **sí** o **no**. Los escondidos tienen cinco minutos para responder.
+
+Después de que se haya respondido una pregunta de radar, el escondido puede **robar 2 cartas y quedarse con 1**.
+
+### PREGUNTAS DE TERMÓMETRO
+
+Las preguntas de termómetro siguen el formato: "Después de viajar _____, ¿estoy más caliente o más frío?" Las respuestas válidas son **más caliente** o **más frío**. Los escondidos tienen cinco minutos para responder.
+
+Después de que se haya respondido una pregunta de termómetro, el escondido puede **robar 2 cartas y quedarse con 1**.
+
+### PREGUNTAS DE FOTOS
+
+Las preguntas de fotos siguen el formato: "Envíame una foto de _____". Los escondidos tienen diez minutos para responder. Todas las fotos deben enviarse en la relación de aspecto normal de tu teléfono.
+
+Después de que se haya respondido una pregunta de foto, el escondido puede **robar 1 carta y quedarse con 1**.
+
+---
+
+## SECCIÓN 4: ESCONDERSE
+
+Como escondido, tu trabajo es permanecer oculto el mayor tiempo posible; permanece oculto más tiempo que cualquier otra persona, y el juego es tuyo.
+
+### ZONAS DE ESCONDITE
+
+Tu zona de escondite es un círculo ubicado en algún lugar dentro del mapa del juego; una vez que los buscadores comienzan a buscar, esta zona es tu nuevo hogar.
+
+Tienes 30 minutos, el período de escondite, para ir desde donde comienza la ronda hasta tu zona de escondite.
+
+**Cada zona de escondite debe estar centrada en una estación de transporte**. El resto de tu zona se extiende **500 metros** hacia afuera desde el icono de esta estación en tu mapa.
+
+### LUGARES DE ESCONDITE
+
+Una vez que los buscadores hayan entrado en tu zona de escondite y haya comenzado el final del juego, debes permanecer en un solo lugar hasta que te hayan encontrado: este es tu lugar de escondite final.
+
+Los lugares de escondite pueden estar en cualquier lugar dentro de tu zona de escondite, pero deben ser un lugar que sea **de acceso público durante todas las horas de juego**.
+
+### EL MAZO DEL ESCONDIDO
+
+El mazo del escondido es tu única y exclusiva arma para usar contra los buscadores, por lo que tendrás que usarlo sabiamente.
+
+Cada vez que los buscadores hagan una pregunta, podrás robar y quedarte con un cierto número de cartas del mazo del escondido. Puedes mantener hasta 6 cartas en tu mano a la vez.
+
+#### BONIFICACIONES DE TIEMPO
+
+Las cartas de bonificación de tiempo vienen en valores variables y cuentan para el tiempo de escondite final del escondido. Estas cartas no se pueden "jugar", y la única forma en que dejan la mano del escondido es si se descartan.
+
+#### POTENCIADORES
+
+Hay varios tipos diferentes de cartas de potenciador que puedes robar del mazo del escondido. Estas cartas se pueden jugar en cualquier momento y te permiten tomar un tipo particular de acción ventajosa una sola vez.
+
+#### MALDICIONES
+
+Las cartas de maldición se juegan contra los buscadores como un medio para ralentizarlos, evitar que hagan preguntas o simplemente para molestarlos.
+
+---
+
+## SECCIÓN 5: CONSEJOS GENERALES
+
+*Hide and Seek* es un juego física y mentalmente exigente. Aquí hay algunos consejos para mantenerse saludable y cómodo mientras juegas:
+
+- **Empaca siempre suficiente comida y agua** para el día completo de juego.
+
+- Considera el **clima en todas las partes del mapa del juego**.
+
+- **Recomendamos encarecidamente que todos los jugadores lleven una batería portátil** para cargar sus teléfonos.
+
+- Al elegir una zona de escondite, asegúrate de que haya un **baño al que puedas acceder**.
+
+- Siempre tienes la opción de **pausar el juego** si se vuelve necesario.
+
+- **Asegúrate de que tu mapa solo incluya áreas donde todos los jugadores se sentirán seguros viajando**.
+
+---
+
+## SECCIÓN 6: DISEÑOS EXPERIMENTALES DEL JUEGO
+
+Hemos considerado algunas versiones alternativas del juego, y pensamos que las detallaríamos aquí en caso de que quieras probarlas.
+
+### JUGAR CON COCHES (O A PIE)
+
+Si tu ciudad natal no tiene suficiente transporte público para jugar, aún puedes estar decidido a hacer que funcione con coches y pies. En este caso, tendrás que hacer algunas modificaciones al conjunto de reglas tradicional del juego.
+
+### JUGAR CON DOS EQUIPOS DE BUSCADORES
+
+Siempre nos ha gustado la idea de jugar con dos equipos de buscadores, compitiendo entre sí para encontrar al mismo escondido. En esta versión del juego, las puntuaciones no se determinarían por el tiempo de escondite, sino por el mejor tiempo de búsqueda.
+`;
+
+        // Funciones para parsear el manual
+        function extractSection(content, startMarker, endMarker) {
+            const startIndex = content.indexOf(startMarker);
+            if (startIndex === -1) return '';
+
+            let endIndex;
+            if (endMarker) {
+                endIndex = content.indexOf(endMarker, startIndex + startMarker.length);
+                if (endIndex === -1) endIndex = content.length;
+            } else {
+                endIndex = content.length;
+            }
+
+            return content.substring(startIndex, endIndex).trim();
+        }
+
+        function markdownToHTML(text) {
+            if (!text) return '';
+
+            let html = text;
+
+            // Escapar caracteres HTML
+            html = html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+            // Headers (## -> h2, ### -> h3, #### -> h4)
+            html = html.replace(/^#### (.+)$/gm, '<h4>$1</h4>');
+            html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+            html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+            html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+
+            // Bold (**text**)
+            html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+
+            // Italic (*text*)
+            html = html.replace(/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/g, '<em>$1</em>');
+
+            // Listas desordenadas (convertir bloques de líneas que empiezan con -)
+            html = html.replace(/^- (.+)$/gm, '<li class="ul-item">$1</li>');
+
+            // Listas ordenadas (convertir bloques de líneas que empiezan con número.)
+            html = html.replace(/^\d+\. (.+)$/gm, '<li class="ol-item">$1</li>');
+
+            // Envolver listas desordenadas en <ul>
+            html = html.replace(/(<li class="ul-item">.*?<\/li>\n?)+/g, function(match) {
+                return '<ul>' + match.replace(/ class="ul-item"/g, '') + '</ul>';
+            });
+
+            // Envolver listas ordenadas en <ol>
+            html = html.replace(/(<li class="ol-item">.*?<\/li>\n?)+/g, function(match) {
+                return '<ol>' + match.replace(/ class="ol-item"/g, '') + '</ol>';
+            });
+
+            // Párrafos (líneas separadas por doble salto de línea)
+            const lines = html.split('\n');
+            const processedLines = [];
+            let inParagraph = false;
+            let paragraphBuffer = [];
+
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+
+                // Skip if it's already wrapped in a tag
+                if (line.match(/^<(h[1-4]|ul|ol|li|hr)/) || line === '</ul>' || line === '</ol>' || line === '') {
+                    if (inParagraph && paragraphBuffer.length > 0) {
+                        processedLines.push('<p>' + paragraphBuffer.join(' ') + '</p>');
+                        paragraphBuffer = [];
+                        inParagraph = false;
+                    }
+                    if (line !== '') {
+                        processedLines.push(line);
+                    }
+                } else {
+                    paragraphBuffer.push(line);
+                    inParagraph = true;
+                }
+            }
+
+            // Close any remaining paragraph
+            if (paragraphBuffer.length > 0) {
+                processedLines.push('<p>' + paragraphBuffer.join(' ') + '</p>');
+            }
+
+            html = processedLines.join('\n');
+
+            // Líneas horizontales (---)
+            html = html.replace(/^---$/gm, '<hr>');
+
+            return html;
+        }
+
+        function parseManualContent() {
+            if (window.manualContentLoaded) return;
+
+            try {
+                const sections = {
+                    inicio: extractSection(MANUAL_CONTENT, 'SECCIÓN 1: GUÍA DE INICIO RÁPIDO', 'SECCIÓN 2: CONFIGURAR TU MAPA'),
+                    configurar: extractSection(MANUAL_CONTENT, 'SECCIÓN 2: CONFIGURAR TU MAPA', 'SECCIÓN 3: BUSCAR'),
+                    buscar: extractSection(MANUAL_CONTENT, 'SECCIÓN 3: BUSCAR', 'SECCIÓN 4: ESCONDERSE'),
+                    esconderse: extractSection(MANUAL_CONTENT, 'SECCIÓN 4: ESCONDERSE', 'SECCIÓN 5: CONSEJOS GENERALES'),
+                    consejos: extractSection(MANUAL_CONTENT, 'SECCIÓN 5: CONSEJOS GENERALES', 'SECCIÓN 6: DISEÑOS EXPERIMENTALES'),
+                    experimentales: extractSection(MANUAL_CONTENT, 'SECCIÓN 6: DISEÑOS EXPERIMENTALES', null)
+                };
+
+                // Generar HTML para cada sección
+                Object.keys(sections).forEach(key => {
+                    const sectionElement = document.getElementById(`manual-${key}`);
+                    if (sectionElement && sections[key]) {
+                        const html = markdownToHTML(sections[key]);
+                        sectionElement.innerHTML = html;
+                    }
+                });
+
+                window.manualContentLoaded = true;
+            } catch (error) {
+                console.error('Error parsing manual content:', error);
+            }
+        }
+
+        // Estado de navegación
+        const NavigationState = {
+            currentTab: 'seguimiento',
+            scrollPositions: { seguimiento: 0, manual: 0 },
+
+            switchTab(tabId) {
+                // Guardar posición de scroll actual
+                this.scrollPositions[this.currentTab] = window.scrollY;
+
+                // Ocultar tab actual
+                document.querySelector('.tab-content.active')?.classList.remove('active');
+                document.querySelector('.nav-button.active')?.classList.remove('active');
+
+                // Mostrar nuevo tab
+                const newTab = document.getElementById(tabId + 'Tab');
+                const newButton = document.querySelector(`[data-tab="${tabId}"]`);
+
+                if (newTab && newButton) {
+                    newTab.classList.add('active');
+                    newTab.style.display = 'block';
+                    newButton.classList.add('active');
+                    newButton.setAttribute('aria-selected', 'true');
+
+                    // Actualizar estado anterior
+                    const oldButton = document.querySelector(`.nav-button:not([data-tab="${tabId}"])`);
+                    if (oldButton) {
+                        oldButton.setAttribute('aria-selected', 'false');
+                    }
+                }
+
+                // Actualizar estado
+                this.currentTab = tabId;
+
+                // Restaurar posición de scroll
+                setTimeout(() => {
+                    window.scrollTo(0, this.scrollPositions[tabId] || 0);
+                }, 10);
+
+                // Guardar en localStorage
+                this.save();
+
+                // Anunciar para screen readers
+                announce(`Cambiado a ${tabId === 'seguimiento' ? 'Seguimiento' : 'Manual'}`);
+
+                // Lazy load manual si es necesario
+                if (tabId === 'manual' && !window.manualContentLoaded) {
+                    parseManualContent();
+                }
+            },
+
+            load() {
+                const saved = localStorage.getItem('navigationState');
+                if (saved) {
+                    try {
+                        const data = JSON.parse(saved);
+                        Object.assign(this, data);
+                    } catch (e) {
+                        console.error('Error loading navigation state:', e);
+                    }
+                }
+            },
+
+            save() {
+                try {
+                    localStorage.setItem('navigationState', JSON.stringify({
+                        currentTab: this.currentTab,
+                        scrollPositions: this.scrollPositions
+                    }));
+                } catch (e) {
+                    console.error('Error saving navigation state:', e);
+                }
+            }
+        };
+
+        // Función para anunciar cambios a screen readers
+        function announce(message) {
+            const liveRegion = document.getElementById('liveRegion') || createLiveRegion();
+            liveRegion.textContent = message;
+            setTimeout(() => { liveRegion.textContent = ''; }, 1000);
+        }
+
+        function createLiveRegion() {
+            const liveRegion = document.createElement('div');
+            liveRegion.id = 'liveRegion';
+            liveRegion.setAttribute('role', 'status');
+            liveRegion.setAttribute('aria-live', 'polite');
+            liveRegion.setAttribute('aria-atomic', 'true');
+            liveRegion.className = 'sr-only';
+            document.body.appendChild(liveRegion);
+            return liveRegion;
+        }
+
+        // Sistema de ayuda
+        function showCategoryHelp(event, categoryId) {
+            event.stopPropagation();
+
+            const content = HELP_CONTENT[categoryId]?.category;
+            if (!content) return;
+
+            const overlay = document.getElementById('helpPopupOverlay');
+            const title = document.getElementById('helpTitle');
+            const body = document.getElementById('helpBody');
+
+            title.textContent = content.title;
+
+            body.innerHTML = `
+                <div class="help-section">
+                    <h4>Formato de Pregunta</h4>
+                    <div class="help-format">${content.format}</div>
+                </div>
+
+                <div class="help-section">
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                        <div><strong>⏱️ Tiempo:</strong> ${content.timeLimit}</div>
+                        <div><strong>🎴 Cartas:</strong> ${content.cardCost}</div>
+                    </div>
+                </div>
+
+                ${content.distances ? `
+                    <div class="help-section">
+                        <h4>Distancias Disponibles</h4>
+                        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                            ${content.distances.map(d => `
+                                <span style="background: #e8f5e9; padding: 5px 12px; border-radius: 15px; font-size: 0.9em;">
+                                    ${d}
+                                </span>
+                            `).join('')}
+                        </div>
+                    </div>
+                ` : ''}
+
+                ${content.subjects ? `
+                    <div class="help-section">
+                        <h4>Sujetos de Fotos</h4>
+                        <ul class="help-tips">
+                            ${content.subjects.map(s => `<li>${s}</li>`).join('')}
+                        </ul>
+                    </div>
+                ` : ''}
+
+                ${content.tips ? `
+                    <div class="help-section">
+                        <h4>Consejos</h4>
+                        <ul class="help-tips">
+                            ${content.tips.map(tip => `<li>${tip}</li>`).join('')}
+                        </ul>
+                    </div>
+                ` : ''}
+
+                ${content.examples ? `
+                    <div class="help-section">
+                        <h4>Ejemplos</h4>
+                        <ul class="help-tips">
+                            ${content.examples.map(ex => `<li>${ex}</li>`).join('')}
+                        </ul>
+                    </div>
+                ` : ''}
+
+                <div class="help-important">
+                    <strong>⚠️ Importante:</strong> ${content.important}
+                </div>
+            `;
+
+            overlay.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeHelp() {
+            const overlay = document.getElementById('helpPopupOverlay');
+            overlay.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+
+        // Mostrar ayuda específica para una pregunta individual
+        function showQuestionHelp(event, categoryId, questionName) {
+            event.stopPropagation();
+
+            const categoryHelp = HELP_CONTENT[categoryId]?.category;
+            const questionHelp = HELP_CONTENT[categoryId]?.questions?.[questionName];
+
+            // Si no hay ayuda específica, mostrar solo la de categoría
+            if (!questionHelp) {
+                return showCategoryHelp(event, categoryId);
+            }
+
+            const overlay = document.getElementById('helpPopupOverlay');
+            const title = document.getElementById('helpTitle');
+            const body = document.getElementById('helpBody');
+
+            title.textContent = questionName;
+
+            body.innerHTML = `
+                <div class="help-section" style="background: #e3f2fd; padding: 15px; border-radius: 8px; border-left: 4px solid #2196f3; margin-bottom: 15px;">
+                    <h4 style="margin-top: 0; color: #1976d2;">💡 Hint</h4>
+                    <p style="margin: 0; font-size: 1.1em; font-weight: 600;">${questionHelp.hint}</p>
+                </div>
+
+                <div class="help-section">
+                    <h4>Detalles</h4>
+                    <p style="line-height: 1.7;">${questionHelp.details}</p>
+                </div>
+
+                ${questionHelp.tips && questionHelp.tips.length > 0 ? `
+                    <div class="help-section">
+                        <h4>Consejos Específicos</h4>
+                        <ul class="help-tips">
+                            ${questionHelp.tips.map(tip => `<li>${tip}</li>`).join('')}
+                        </ul>
+                    </div>
+                ` : ''}
+
+                ${categoryHelp ? `
+                    <div class="help-section" style="border-top: 2px solid #e0e0e0; padding-top: 15px; margin-top: 20px;">
+                        <h4>Contexto de Categoría: ${categoryHelp.title}</h4>
+                        <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 10px;">
+                            <div><strong>⏱️ Tiempo:</strong> ${categoryHelp.timeLimit}</div>
+                            <div><strong>🎴 Cartas:</strong> ${categoryHelp.cardCost}</div>
+                        </div>
+                        <div class="help-format" style="font-size: 0.95em;">${categoryHelp.format}</div>
+                    </div>
+                ` : ''}
+            `;
+
+            overlay.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Manual TOC y navegación
+        function toggleTOC() {
+            document.getElementById('manualTOC')?.classList.toggle('open');
+        }
+
+        function navigateToSection(event, sectionId) {
+            event.preventDefault();
+
+            const section = document.getElementById(`manual-${sectionId}`);
+            if (section) {
+                document.getElementById('manualTOC')?.classList.remove('open');
+                section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+                // Update active link
+                document.querySelectorAll('.toc-link').forEach(link => {
+                    link.classList.remove('active');
+                });
+                event.target.classList.add('active');
+            }
+        }
+
+        // Swipe Handler para gestos
+        class SwipeHandler {
+            constructor() {
+                this.startX = 0;
+                this.startY = 0;
+                this.currentX = 0;
+                this.currentY = 0;
+                this.isDragging = false;
+                this.isHorizontalSwipe = null;
+                this.threshold = 80;
+                this.container = document.querySelector('.tabs-container');
+
+                if (this.container) {
+                    this.init();
+                }
+            }
+
+            init() {
+                this.container.addEventListener('touchstart', (e) => this.handleTouchStart(e), {passive: true});
+                this.container.addEventListener('touchmove', (e) => this.handleTouchMove(e), {passive: false});
+                this.container.addEventListener('touchend', (e) => this.handleTouchEnd(e), {passive: true});
+            }
+
+            handleTouchStart(e) {
+                this.startX = e.touches[0].clientX;
+                this.startY = e.touches[0].clientY;
+                this.currentX = this.startX;
+                this.currentY = this.startY;
+                this.isDragging = true;
+                this.isHorizontalSwipe = null;
+            }
+
+            handleTouchMove(e) {
+                if (!this.isDragging) return;
+
+                this.currentX = e.touches[0].clientX;
+                this.currentY = e.touches[0].clientY;
+
+                const deltaX = Math.abs(this.currentX - this.startX);
+                const deltaY = Math.abs(this.currentY - this.startY);
+
+                if (this.isHorizontalSwipe === null && (deltaX > 10 || deltaY > 10)) {
+                    this.isHorizontalSwipe = deltaX > deltaY;
+                }
+
+                if (this.isHorizontalSwipe && deltaX > 10) {
+                    e.preventDefault();
+                }
+            }
+
+            handleTouchEnd(e) {
+                if (!this.isDragging) return;
+
+                const deltaX = this.currentX - this.startX;
+                const deltaY = Math.abs(this.currentY - this.startY);
+
+                if (this.isHorizontalSwipe && deltaY < 100) {
+                    if (deltaX > this.threshold) {
+                        if (NavigationState.currentTab === 'manual') {
+                            NavigationState.switchTab('seguimiento');
+                        }
+                    } else if (deltaX < -this.threshold) {
+                        if (NavigationState.currentTab === 'seguimiento') {
+                            NavigationState.switchTab('manual');
+                        }
+                    }
+                }
+
+                this.isDragging = false;
+                this.isHorizontalSwipe = null;
+            }
+        }
+
+        // Inicializar todo al cargar la página
+        let swipeHandler;
+        const originalDOMContentLoaded = document.addEventListener;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cargar estado de navegación
+            NavigationState.load();
+
+            // Event listeners para navegación
+            document.querySelectorAll('.nav-button').forEach(button => {
+                button.addEventListener('click', () => {
+                    NavigationState.switchTab(button.dataset.tab);
+                });
+            });
+
+            // Inicializar swipe handler
+            swipeHandler = new SwipeHandler();
+
+            // Crear live region
+            createLiveRegion();
+        });
+
+        // Cerrar ayuda con ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeHelp();
+            }
+        });
+
+    </script>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav" role="navigation" aria-label="Navegación principal">
+        <button class="nav-button active" data-tab="seguimiento" id="nav-seguimiento"
+                role="tab" aria-selected="true" aria-controls="seguimientoTab">
+            <span class="nav-icon">📋</span>
+            <span class="nav-label">Seguimiento</span>
+        </button>
+        <button class="nav-button" data-tab="manual" id="nav-manual"
+                role="tab" aria-selected="false" aria-controls="manualTab">
+            <span class="nav-icon">📖</span>
+            <span class="nav-label">Manual</span>
+        </button>
+    </nav>
+
+    <!-- Help Popup Overlay -->
+    <div id="helpPopupOverlay" class="help-overlay" onclick="closeHelp()">
+        <div class="help-popup" onclick="event.stopPropagation()">
+            <div class="help-header">
+                <h3 id="helpTitle"></h3>
+                <button class="help-close-btn" onclick="closeHelp()" aria-label="Cerrar">✕</button>
+            </div>
+            <div class="help-body" id="helpBody"></div>
+        </div>
+    </div>
+
+</body>
+</html>
