@@ -4,7 +4,7 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  basePath: process.env.NODE_ENV === 'production' ? '/has' : '',
+  basePath: process.env.NODE_ENV === 'production' ? '/hide-and-seek-barcelona' : '',
 }
 
 module.exports = nextConfig

@@ -379,76 +379,123 @@ export const HELP_CONTENT: Record<string, HelpContent> = {
 
 export const INITIAL_QUESTIONS: Record<string, any> = {
   matching: [
-    { name: 'Commercial Airport', checked: false },
-    { name: 'Transit Line', checked: false },
-    { name: "Station's Name Length", checked: false },
-    { name: 'Street or Path', checked: false },
-    { name: '1st Admin. Division', checked: false },
-    { name: '2nd Admin. Division', checked: false },
-    { name: '3rd Admin. Division', checked: false },
-    { name: '4th Admin. Division', checked: false },
-    { name: 'Mountain', checked: false },
-    { name: 'Landmass', checked: false },
-    { name: 'Park', checked: false },
-    { name: 'Amusement Park', checked: false },
-    { name: 'Zoo', checked: false },
-    { name: 'Aquarium', checked: false },
-    { name: 'Golf Course', checked: false },
-    { name: 'Museum', checked: false },
-    { name: 'Movie Theater', checked: false },
-    { name: 'Hospital', checked: false },
-    { name: 'Library', checked: false },
-    { name: 'Foreign Consulate', checked: false }
+    { name: 'Commercial Airport', checked: false, note: undefined },
+    { name: 'Transit Line', checked: false, note: undefined },
+    { name: "Station's Name Length", checked: false, note: undefined },
+    { name: 'Street or Path', checked: false, note: undefined },
+    { name: '1st Admin. Division', checked: false, note: undefined },
+    { name: '2nd Admin. Division', checked: false, note: undefined },
+    { name: '3rd Admin. Division', checked: false, note: undefined },
+    { name: '4th Admin. Division', checked: false, note: undefined },
+    { name: 'Mountain', checked: false, note: undefined },
+    { name: 'Landmass', checked: false, note: undefined },
+    { name: 'Park', checked: false, note: undefined },
+    { name: 'Amusement Park', checked: false, note: undefined },
+    { name: 'Zoo', checked: false, note: undefined },
+    { name: 'Aquarium', checked: false, note: undefined },
+    { name: 'Golf Course', checked: false, note: undefined },
+    { name: 'Museum', checked: false, note: undefined },
+    { name: 'Movie Theater', checked: false, note: undefined },
+    { name: 'Hospital', checked: false, note: undefined },
+    { name: 'Library', checked: false, note: undefined },
+    { name: 'Foreign Consulate', checked: false, note: undefined }
   ],
   measuring: [
-    { name: 'A Commercial Airport', checked: false },
-    { name: 'A High Speed Train Line', checked: false },
-    { name: 'A Rail Station', checked: false },
-    { name: 'An International Border', checked: false },
-    { name: 'A 1st Admin. Div. Border', checked: false },
-    { name: 'A 2nd Admin. Div. Border', checked: false },
-    { name: 'Sea Level', checked: false },
-    { name: 'A Body of Water', checked: false },
-    { name: 'A Coastline', checked: false },
-    { name: 'A Mountain', checked: false },
-    { name: 'A Park', checked: false },
-    { name: 'An Amusement Park', checked: false },
-    { name: 'A Zoo', checked: false },
-    { name: 'An Aquarium', checked: false },
-    { name: 'A Golf Course', checked: false },
-    { name: 'A Museum', checked: false },
-    { name: 'A Movie Theater', checked: false },
-    { name: 'A Hospital', checked: false },
-    { name: 'A Library', checked: false },
-    { name: 'A Foreign Consulate', checked: false }
+    { name: 'A Commercial Airport', checked: false, note: undefined },
+    { name: 'A High Speed Train Line', checked: false, note: undefined },
+    { name: 'A Rail Station', checked: false, note: undefined },
+    { name: 'An International Border', checked: false, note: undefined },
+    { name: 'A 1st Admin. Div. Border', checked: false, note: undefined },
+    { name: 'A 2nd Admin. Div. Border', checked: false, note: undefined },
+    { name: 'Sea Level', checked: false, note: undefined },
+    { name: 'A Body of Water', checked: false, note: undefined },
+    { name: 'A Coastline', checked: false, note: undefined },
+    { name: 'A Mountain', checked: false, note: undefined },
+    { name: 'A Park', checked: false, note: undefined },
+    { name: 'An Amusement Park', checked: false, note: undefined },
+    { name: 'A Zoo', checked: false, note: undefined },
+    { name: 'An Aquarium', checked: false, note: undefined },
+    { name: 'A Golf Course', checked: false, note: undefined },
+    { name: 'A Museum', checked: false, note: undefined },
+    { name: 'A Movie Theater', checked: false, note: undefined },
+    { name: 'A Hospital', checked: false, note: undefined },
+    { name: 'A Library', checked: false, note: undefined },
+    { name: 'A Foreign Consulate', checked: false, note: undefined }
   ],
   thermometer: [
-    { name: '1 km', checked: false },
-    { name: '5 km', checked: false }
+    { name: '1 km', checked: false, note: undefined },
+    { name: '5 km', checked: false, note: undefined }
   ],
   radar: [
-    { name: '500 m', checked: false },
-    { name: '1 km', checked: false },
-    { name: '2 km', checked: false },
-    { name: '5 km', checked: false },
-    { name: '10 km', checked: false },
-    { name: '15 km', checked: false },
-    { name: '40 km', checked: false },
-    { name: '80 km', checked: false },
-    { name: '160 km', checked: false },
-    { name: 'CHOOSE (cualquier distancia)', checked: false }
+    { name: '500 m', checked: false, note: undefined },
+    { name: '1 km', checked: false, note: undefined },
+    { name: '2 km', checked: false, note: undefined },
+    { name: '5 km', checked: false, note: undefined },
+    { name: '10 km', checked: false, note: undefined },
+    { name: '15 km', checked: false, note: undefined },
+    { name: '40 km', checked: false, note: undefined },
+    { name: '80 km', checked: false, note: undefined },
+    { name: '160 km', checked: false, note: undefined },
+    { name: 'CHOOSE (cualquier distancia)', checked: false, note: undefined }
   ],
   photos: [
-    { name: 'A Tree', description: 'Debe incluir el árbol completo', taken: false },
-    { name: 'The Sky', description: 'Teléfono en el suelo, dispara hacia arriba', taken: false },
-    { name: 'You', description: 'Selfie con brazo extendido', taken: false },
-    { name: 'Widest Street', description: 'Debe incluir ambos lados', taken: false },
-    { name: 'Tallest Structure in Sightline', description: 'La más alta desde tu perspectiva', taken: false },
-    { name: 'Any Building from Station', description: 'Directamente afuera de la entrada', taken: false }
+    { name: 'A Tree', description: 'Debe incluir el árbol completo', taken: false, note: undefined },
+    { name: 'The Sky', description: 'Teléfono en el suelo, dispara hacia arriba', taken: false, note: undefined },
+    { name: 'You', description: 'Selfie con brazo extendido', taken: false, note: undefined },
+    { name: 'Widest Street', description: 'Debe incluir ambos lados', taken: false, note: undefined },
+    { name: 'Tallest Structure in Sightline', description: 'La más alta desde tu perspectiva', taken: false, note: undefined },
+    { name: 'Any Building from Station', description: 'Directamente afuera de la entrada', taken: false, note: undefined }
   ]
 }
 
 export const MEASUREMENT_SCALE = {
-  metersPerPixel: 113 / 100, // 113 meters = 100 pixels
-  pixelsPerMeter: 100 / 113
+  metersPerPixel: 3400 / 3306, // 3.4km width / 3306px ≈ 1.028 m/px
+  pixelsPerMeter: 3306 / 3400
+}
+
+export const GAME_MODES = {
+  normal: {
+    hideZoneRadius: 500,
+    radarDistances: ['500 m', '1 km', '2 km', '5 km', '10 km', '15 km', '40 km', '80 km', '160 km', 'CHOOSE'],
+    thermometerDistances: ['1 km', '5 km']
+  },
+  verySmall: {
+    hideZoneRadius: 400,
+    radarDistances: ['200 m', '500 m', '1 km', '2 km', '5 km', '10 km', '15 km', '40 km', '80 km', '160 km', 'CHOOSE'],
+    thermometerDistances: ['200 m', '500 m', '1 km']
+  }
+}
+
+export const VERY_SMALL_QUESTIONS = {
+  thermometer: [
+    { name: '200 m', checked: false, note: undefined },
+    { name: '500 m', checked: false, note: undefined },
+    { name: '1 km', checked: false, note: undefined }
+  ],
+  radar: [
+    { name: '200 m', checked: false, note: undefined },
+    { name: '500 m', checked: false, note: undefined },
+    { name: '1 km', checked: false, note: undefined },
+    { name: '2 km', checked: false, note: undefined },
+    { name: '5 km', checked: false, note: undefined },
+    { name: '10 km', checked: false, note: undefined },
+    { name: '15 km', checked: false, note: undefined },
+    { name: '40 km', checked: false, note: undefined },
+    { name: '80 km', checked: false, note: undefined },
+    { name: '160 km', checked: false, note: undefined },
+    { name: 'CHOOSE (cualquier distancia)', checked: false, note: undefined }
+  ]
+}
+
+export const INITIAL_MAPS_DATA = {
+  barrisDistrictes: {
+    name: 'Barris i Districtes',
+    imagePath: '/images/Barris i Districtes.jpg',
+    markers: []
+  },
+  planolJoc: {
+    name: 'Plànol del JOC',
+    imagePath: '/images/Plànol del JOC.png',
+    markers: []
+  }
 }

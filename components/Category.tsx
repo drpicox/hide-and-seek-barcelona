@@ -11,6 +11,7 @@ interface CategoryProps {
   isExpanded: boolean
   onToggle: () => void
   onToggleQuestion: (index: number) => void
+  onNoteChange: (index: number, note: string) => void
   isPhotoCategory?: boolean
 }
 
@@ -21,6 +22,7 @@ export default function Category({
   isExpanded,
   onToggle,
   onToggleQuestion,
+  onNoteChange,
   isPhotoCategory = false
 }: CategoryProps) {
   const [showCategoryHelp, setShowCategoryHelp] = useState(false)
@@ -84,6 +86,7 @@ export default function Category({
               categoryId={categoryId}
               index={index}
               onToggle={() => onToggleQuestion(index)}
+              onNoteChange={(note) => onNoteChange(index, note)}
               isPhotoCategory={isPhotoCategory}
             />
           ))}

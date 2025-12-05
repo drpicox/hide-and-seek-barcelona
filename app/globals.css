@@ -4,7 +4,7 @@
 
 :root {
   --header-height: 60px;
-  --bottom-nav-height: 64px;
+  --bottom-nav-height: 48px;
 }
 
 @supports (padding: max(0px)) {

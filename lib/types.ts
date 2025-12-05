@@ -22,12 +22,14 @@ export interface HelpContent {
 export interface QuestionData {
   name: string
   checked: boolean
+  note?: string
 }
 
 export interface PhotoQuestionData {
   name: string
   description: string
   taken: boolean
+  note?: string
 }
 
 export interface CategoryData {
@@ -48,7 +50,16 @@ export interface Stats {
   photos: { taken: number; total: number }
 }
 
-export type TabId = 'seguimiento' | 'manual'
+// Multi-hider support
+export const HIDER_COLORS = [
+  { name: 'Hider 1', color: '#7c3aed', bg: 'rgba(124, 58, 237, 0.15)' },
+  { name: 'Hider 2', color: '#dc2626', bg: 'rgba(220, 38, 38, 0.15)' },
+  { name: 'Hider 3', color: '#059669', bg: 'rgba(5, 150, 105, 0.15)' },
+] as const
+
+export type AllHidersData = [CategoryData, CategoryData, CategoryData]
+
+export type TabId = 'seguimiento' | 'manual' | 'mapa' | 'barris'
 
 export interface MeasurementPoint {
   x: number
@@ -56,3 +67,28 @@ export interface MeasurementPoint {
 }
 
 export type MeasurementMode = 'circle' | 'line'
+
+export interface MapMarker {
+  id: string
+  x: number
+  y: number
+  note: string
+  timestamp: number
+}
+
+export interface MapData {
+  name: string
+  imagePath: string
+  markers: MapMarker[]
+}
+
+export interface MapsData {
+  barrisDistrictes: MapData
+  planolJoc: MapData
+}
+
+export interface Station {
+  name: string
+  x: number
+  y: number
+}

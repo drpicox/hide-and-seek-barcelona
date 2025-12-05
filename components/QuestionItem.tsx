@@ -8,6 +8,7 @@ interface QuestionItemProps {
   categoryId: CategoryId
   index: number
   onToggle: () => void
+  onNoteChange?: (note: string) => void
   isPhotoCategory?: boolean
 }
 
@@ -16,9 +17,12 @@ export default function QuestionItem({
   categoryId,
   index,
   onToggle,
+  onNoteChange,
   isPhotoCategory = false
 }: QuestionItemProps) {
   const [showHelp, setShowHelp] = useState(false)
+  const [isEditingNote, setIsEditingNote] = useState(false)
+  const [noteValue, setNoteValue] = useState(question.note || '')
 
   const isChecked = isPhotoCategory
     ? (question as PhotoQuestionData).taken
@@ -31,6 +35,18 @@ export default function QuestionItem({
   const handleHelpClick = (e: React.MouseEvent) => {
     e.stopPropagation()
     setShowHelp(true)
+  }
+
+  const handleNoteSave = () => {
+    if (onNoteChange) {
+      onNoteChange(noteValue.trim())
+    }
+    setIsEditingNote(false)
+  }
+
+  const handleNoteCancel = () => {
+    setNoteValue(question.note || '')
+    setIsEditingNote(false)
   }
 
   return (
@@ -77,6 +93,60 @@ export default function QuestionItem({
             </div>
           </div>
         </div>
+
+        {/* Notes Section - Only show when checked */}
+        {isChecked && (
+          <div className="mt-3 pl-8" onClick={(e) => e.stopPropagation()}>
+            {!isEditingNote ? (
+              <div className="flex items-start gap-2">
+                <div className="flex-1">
+                  {question.note ? (
+                    <p className="text-sm text-gray-700 bg-yellow-50 p-2 rounded border-l-4 border-yellow-400">
+                      {question.note}
+                    </p>
+                  ) : (
+                    <p className="text-sm text-gray-400 italic">Sin notas</p>
+                  )}
+                </div>
+                <button
+                  onClick={() => setIsEditingNote(true)}
+                  className="flex-shrink-0 p-1.5 text-purple-600 hover:bg-purple-100 rounded"
+                  aria-label="Editar nota"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                      d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                  </svg>
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <textarea
+                  value={noteValue}
+                  onChange={(e) => setNoteValue(e.target.value)}
+                  placeholder="Añade una nota..."
+                  className="w-full p-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  rows={3}
+                  autoFocus
+                />
+                <div className="flex gap-2 justify-end">
+                  <button
+                    onClick={handleNoteCancel}
+                    className="px-3 py-1 text-sm text-gray-600 hover:bg-gray-100 rounded"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    onClick={handleNoteSave}
+                    className="px-3 py-1 text-sm bg-purple-600 text-white rounded hover:bg-purple-700"
+                  >
+                    Guardar
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Question-specific Help Modal */}

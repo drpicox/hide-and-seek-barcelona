@@ -1,33 +1,47 @@
-import { useState, useEffect } from 'react'
-import { markdownToHTML, extractSections } from '@/lib/markdown'
+import { useState, useEffect, useRef } from 'react'
+import { markdownToHTML, splitIntoSections, Section } from '@/lib/markdown'
+
+const basePath = process.env.NODE_ENV === 'production' ? '/hide-and-seek-barcelona' : ''
 
 export default function ManualTab() {
-  const [manualContent, setManualContent] = useState('')
-  const [htmlContent, setHtmlContent] = useState('')
-  const [sections, setSections] = useState<Array<{ id: string; title: string; level: number }>>([])
+  const [sections, setSections] = useState<Section[]>([])
+  const [currentIndex, setCurrentIndex] = useState(0)
   const [showTOC, setShowTOC] = useState(false)
+  const contentRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     // Load manual content
-    fetch('/manual-content.md')
+    fetch(`${basePath}/manual-content.md`)
       .then(res => res.text())
       .then(content => {
-        setManualContent(content)
-        setHtmlContent(markdownToHTML(content))
-        setSections(extractSections(content))
+        const parsedSections = splitIntoSections(content)
+        setSections(parsedSections)
       })
       .catch(err => console.error('Error loading manual:', err))
   }, [])
 
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId)
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      setShowTOC(false)
+  const goToSection = (index: number) => {
+    setCurrentIndex(index)
+    setShowTOC(false)
+    // Scroll to top of content
+    if (contentRef.current) {
+      contentRef.current.scrollTop = 0
     }
   }
 
-  if (!htmlContent) {
+  const goToPrevious = () => {
+    if (currentIndex > 0) {
+      goToSection(currentIndex - 1)
+    }
+  }
+
+  const goToNext = () => {
+    if (currentIndex < sections.length - 1) {
+      goToSection(currentIndex + 1)
+    }
+  }
+
+  if (sections.length === 0) {
     return (
       <div className="container mx-auto px-4 py-8 text-center">
         <p className="text-gray-600">Cargando manual...</p>
@@ -35,52 +49,121 @@ export default function ManualTab() {
     )
   }
 
-  return (
-    <div className="container mx-auto px-4 py-4">
-      {/* TOC Toggle Button */}
+  const currentSection = sections[currentIndex]
+  const prevSection = currentIndex > 0 ? sections[currentIndex - 1] : null
+  const nextSection = currentIndex < sections.length - 1 ? sections[currentIndex + 1] : null
+
+  const NavigationButtons = () => (
+    <div className="flex items-center justify-between gap-2">
+      {/* Previous Button */}
       <button
-        onClick={() => setShowTOC(!showTOC)}
-        className="mb-4 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2"
+        onClick={goToPrevious}
+        disabled={!prevSection}
+        className={`flex-1 flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
+          prevSection
+            ? 'bg-purple-100 text-purple-700 hover:bg-purple-200'
+            : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+        }`}
       >
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M4 6h16M4 12h16M4 18h16"
-          />
+        <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
         </svg>
-        {showTOC ? 'Ocultar' : 'Mostrar'} Tabla de Contenidos
+        <span className="truncate text-left">
+          {prevSection ? prevSection.title : 'Inici'}
+        </span>
       </button>
 
-      {/* Table of Contents */}
+      {/* TOC Button */}
+      <button
+        onClick={() => setShowTOC(!showTOC)}
+        className="px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex-shrink-0"
+        title="Taula de Continguts"
+      >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+
+      {/* Next Button */}
+      <button
+        onClick={goToNext}
+        disabled={!nextSection}
+        className={`flex-1 flex items-center justify-end gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
+          nextSection
+            ? 'bg-purple-100 text-purple-700 hover:bg-purple-200'
+            : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+        }`}
+      >
+        <span className="truncate text-right">
+          {nextSection ? nextSection.title : 'Fi'}
+        </span>
+        <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+  )
+
+  return (
+    <div className="h-full flex flex-col container mx-auto px-4 py-4">
+      {/* Top Navigation */}
+      <div className="mb-4">
+        <NavigationButtons />
+      </div>
+
+      {/* Table of Contents Modal */}
       {showTOC && (
-        <div className="mb-6 bg-white rounded-lg shadow-md p-4">
-          <h3 className="text-lg font-bold text-purple-900 mb-3">Tabla de Contenidos</h3>
-          <nav className="space-y-1">
-            {sections.map(section => (
-              <button
-                key={section.id}
-                onClick={() => scrollToSection(section.id)}
-                className={`block w-full text-left px-2 py-1 rounded hover:bg-purple-50 transition-colors ${
-                  section.level === 1 ? 'font-bold text-purple-900' :
-                  section.level === 2 ? 'pl-4 font-semibold text-purple-800' :
-                  'pl-8 text-gray-700'
-                }`}
-              >
-                {section.title}
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowTOC(false)}>
+          <div
+            className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[80vh] overflow-hidden"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="p-4 bg-purple-600 text-white flex items-center justify-between">
+              <h3 className="text-lg font-bold">Taula de Continguts</h3>
+              <button onClick={() => setShowTOC(false)} className="p-1 hover:bg-purple-700 rounded">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
               </button>
-            ))}
-          </nav>
+            </div>
+            <nav className="p-4 overflow-y-auto max-h-[60vh]">
+              {sections.map((section, index) => (
+                <button
+                  key={section.id}
+                  onClick={() => goToSection(index)}
+                  className={`block w-full text-left px-3 py-2 rounded-lg mb-1 transition-colors ${
+                    index === currentIndex
+                      ? 'bg-purple-100 text-purple-900 font-semibold'
+                      : 'hover:bg-gray-100 text-gray-700'
+                  } ${section.level === 1 ? 'font-bold' : 'pl-6'}`}
+                >
+                  {section.title}
+                </button>
+              ))}
+            </nav>
+          </div>
         </div>
       )}
 
-      {/* Manual Content */}
-      <div className="bg-white rounded-lg shadow-md p-6">
+      {/* Section Content */}
+      <div
+        ref={contentRef}
+        className="flex-1 bg-white rounded-lg shadow-md p-6 overflow-y-auto"
+      >
+        {/* Section indicator */}
+        <div className="text-sm text-purple-600 mb-2">
+          {currentIndex + 1} / {sections.length}
+        </div>
+
         <div
           className="prose prose-purple max-w-none manual-content"
-          dangerouslySetInnerHTML={{ __html: htmlContent }}
+          dangerouslySetInnerHTML={{ __html: markdownToHTML(currentSection.content) }}
         />
+      </div>
+
+      {/* Bottom Navigation */}
+      <div className="mt-4">
+        <NavigationButtons />
       </div>
 
       <style jsx global>{`
@@ -88,14 +171,14 @@ export default function ManualTab() {
           font-size: 2rem;
           font-weight: bold;
           color: #581c87;
-          margin-top: 2rem;
+          margin-top: 0.5rem;
           margin-bottom: 1rem;
         }
         .manual-content h2 {
           font-size: 1.5rem;
           font-weight: bold;
           color: #6b21a8;
-          margin-top: 1.5rem;
+          margin-top: 0.5rem;
           margin-bottom: 0.75rem;
         }
         .manual-content h3 {

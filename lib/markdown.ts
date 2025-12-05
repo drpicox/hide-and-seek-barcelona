@@ -6,11 +6,11 @@ export function markdownToHTML(markdown: string): string {
   html = html.replace(/</g, '&lt;')
   html = html.replace(/>/g, '&gt;')
 
-  // Headers
-  html = html.replace(/^#### (.+)$/gm, '<h4>$1</h4>')
-  html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>')
-  html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>')
-  html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>')
+  // Headers with IDs
+  html = html.replace(/^#### (.+)$/gm, (_, title) => `<h4 id="${slugify(title)}">${title}</h4>`)
+  html = html.replace(/^### (.+)$/gm, (_, title) => `<h3 id="${slugify(title)}">${title}</h3>`)
+  html = html.replace(/^## (.+)$/gm, (_, title) => `<h2 id="${slugify(title)}">${title}</h2>`)
+  html = html.replace(/^# (.+)$/gm, (_, title) => `<h1 id="${slugify(title)}">${title}</h1>`)
 
   // Bold and italic
   html = html.replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>')
@@ -76,6 +76,66 @@ export function extractSections(markdown: string): Array<{ id: string; title: st
         level: 3
       })
     }
+  }
+
+  return sections
+}
+
+export interface Section {
+  id: string
+  title: string
+  level: number
+  content: string
+}
+
+export function splitIntoSections(markdown: string): Section[] {
+  const lines = markdown.split('\n')
+  const sections: Section[] = []
+  let currentSection: Section | null = null
+  let currentContent: string[] = []
+
+  for (const line of lines) {
+    const h1Match = line.match(/^# (.+)$/)
+    const h2Match = line.match(/^## (.+)$/)
+
+    // Start a new section on h1 or h2
+    if (h1Match || h2Match) {
+      // Save previous section
+      if (currentSection) {
+        currentSection.content = currentContent.join('\n')
+        sections.push(currentSection)
+      }
+
+      const title = h1Match ? h1Match[1] : h2Match![1]
+      const level = h1Match ? 1 : 2
+
+      currentSection = {
+        id: slugify(title),
+        title,
+        level,
+        content: ''
+      }
+      currentContent = [line]
+    } else if (currentSection) {
+      currentContent.push(line)
+    } else {
+      // Content before first section - create intro section
+      if (line.trim()) {
+        currentSection = {
+          id: 'intro',
+          title: 'Introducció',
+          level: 1,
+          content: ''
+        }
+        currentContent = [line]
+      }
+    }
+  }
+
+  // Save last section
+  if (currentSection) {
+    currentSection.content = currentContent.join('\n')
+    sections.push(currentSection)
   }
 
   return sections

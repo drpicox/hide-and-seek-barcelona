@@ -3,17 +3,25 @@
 import { useState, useEffect } from 'react'
 import { useLocalStorage } from '@/lib/hooks/useLocalStorage'
 import { INITIAL_QUESTIONS } from '@/lib/constants'
-import type { CategoryData, TabId, Stats } from '@/lib/types'
+import type { CategoryData, TabId, Stats, AllHidersData } from '@/lib/types'
+import { HIDER_COLORS } from '@/lib/types'
 import Header from './Header'
 import BottomNav from './BottomNav'
 import TrackingTab from './TrackingTab'
 import ManualTab from './ManualTab'
+import MapTab from './MapTab'
 
 export function HideAndSeekApp() {
   const [activeTab, setActiveTab] = useState<TabId>('seguimiento')
-  const [questions, setQuestions] = useLocalStorage<CategoryData>(
-    'hideAndSeekQuestions',
-    INITIAL_QUESTIONS as CategoryData
+  const [activeHider, setActiveHider] = useLocalStorage<number>('hideAndSeekActiveHider', 0)
+  const [verySmall, setVerySmall] = useLocalStorage<boolean>('hideAndSeekVerySmall', false)
+  const [allHidersQuestions, setAllHidersQuestions] = useLocalStorage<AllHidersData>(
+    'hideAndSeekAllHiders',
+    [
+      INITIAL_QUESTIONS as CategoryData,
+      INITIAL_QUESTIONS as CategoryData,
+      INITIAL_QUESTIONS as CategoryData
+    ]
   )
   const [stats, setStats] = useState<Stats>({
     matching: { answered: 0, total: 21 },
@@ -22,6 +30,9 @@ export function HideAndSeekApp() {
     radar: { answered: 0, total: 10 },
     photos: { taken: 0, total: 6 }
   })
+
+  // Current hider's questions
+  const questions = allHidersQuestions[activeHider]
 
   // Calculate stats whenever questions change
   useEffect(() => {
@@ -51,44 +62,97 @@ export function HideAndSeekApp() {
   }, [questions])
 
   const handleToggleQuestion = (category: keyof CategoryData, index: number) => {
-    setQuestions(prev => {
-      const newQuestions = { ...prev }
+    setAllHidersQuestions(prev => {
+      const newAllHiders = [...prev] as AllHidersData
+      const newQuestions = { ...newAllHiders[activeHider] }
       if (category === 'photos') {
+        newQuestions.photos = [...newQuestions.photos]
         newQuestions.photos[index] = {
           ...newQuestions.photos[index],
           taken: !newQuestions.photos[index].taken
         }
       } else {
+        newQuestions[category] = [...newQuestions[category]]
         newQuestions[category][index] = {
           ...newQuestions[category][index],
           checked: !newQuestions[category][index].checked
         }
       }
-      return newQuestions
+      newAllHiders[activeHider] = newQuestions
+      return newAllHiders
+    })
+  }
+
+  const handleNoteChange = (category: keyof CategoryData, index: number, note: string) => {
+    setAllHidersQuestions(prev => {
+      const newAllHiders = [...prev] as AllHidersData
+      const newQuestions = { ...newAllHiders[activeHider] }
+      if (category === 'photos') {
+        newQuestions.photos = [...newQuestions.photos]
+        newQuestions.photos[index] = {
+          ...newQuestions.photos[index],
+          note
+        }
+      } else {
+        newQuestions[category] = [...newQuestions[category]]
+        newQuestions[category][index] = {
+          ...newQuestions[category][index],
+          note
+        }
+      }
+      newAllHiders[activeHider] = newQuestions
+      return newAllHiders
     })
   }
 
   const handleReset = () => {
-    if (confirm('¿Estás seguro de que quieres reiniciar todas las preguntas?')) {
-      setQuestions(INITIAL_QUESTIONS as CategoryData)
+    if (confirm(`Reiniciar les preguntes de ${HIDER_COLORS[activeHider].name}?`)) {
+      setAllHidersQuestions(prev => {
+        const newAllHiders = [...prev] as AllHidersData
+        newAllHiders[activeHider] = INITIAL_QUESTIONS as CategoryData
+        return newAllHiders
+      })
     }
   }
 
+  const showHeader = activeTab === 'seguimiento' || activeTab === 'manual'
+
+  const isMapTab = activeTab === 'mapa' || activeTab === 'barris'
+
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
-      <Header onReset={handleReset} stats={stats} />
+    <div className="h-screen flex flex-col bg-gray-50 overflow-hidden">
+      {showHeader && (
+        <Header
+          onReset={handleReset}
+          stats={stats}
+          verySmall={verySmall}
+          onVerySmallToggle={() => setVerySmall(!verySmall)}
+          activeHider={activeHider}
+          onHiderChange={setActiveHider}
+        />
+      )}
 
       <main
-        className="flex-1 overflow-y-auto pb-16"
-        style={{ paddingTop: 'var(--header-height)' }}
+        className={`flex-1 ${isMapTab ? 'overflow-hidden' : 'overflow-y-auto'}`}
+        style={{
+          marginTop: showHeader ? 'var(--header-height)' : '0',
+          marginBottom: 'var(--bottom-nav-height)'
+        }}
       >
         {activeTab === 'seguimiento' ? (
           <TrackingTab
             questions={questions}
+            verySmall={verySmall}
             onToggleQuestion={handleToggleQuestion}
+            onNoteChange={handleNoteChange}
+            activeHider={activeHider}
           />
-        ) : (
+        ) : activeTab === 'manual' ? (
           <ManualTab />
+        ) : activeTab === 'mapa' ? (
+          <MapTab mapType="mapa" activeHider={activeHider} onHiderChange={setActiveHider} />
+        ) : (
+          <MapTab mapType="barris" activeHider={activeHider} onHiderChange={setActiveHider} />
         )}
       </main>
 
