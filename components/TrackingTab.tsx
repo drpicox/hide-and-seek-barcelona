@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import type { CategoryData, CategoryId } from '@/lib/types'
-import { HIDER_COLORS } from '@/lib/types'
 import { VERY_SMALL_QUESTIONS } from '@/lib/constants'
 import Category from './Category'
 import PDFExport from './PDFExport'
