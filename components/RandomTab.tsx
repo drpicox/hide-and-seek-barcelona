@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useLocalStorage } from '@/lib/hooks/useLocalStorage'
 
 interface StreakData {
@@ -14,6 +14,10 @@ const initialStreaks: StreakData = {
   dice2: { value: 0, count: 0 },
   coin: { value: 'Cara', count: 0 }
 }
+
+type DiceResult = { die1: number; die2: number; sum: number }
+type CoinResult = 'Cara' | 'Creu'
+type RandomResult = number | DiceResult | CoinResult
 
 export default function RandomTab() {
   const [streaks, setStreaks] = useLocalStorage<StreakData>('randomStreaks', initialStreaks)
@@ -29,6 +33,15 @@ export default function RandomTab() {
     dice2?: { die1: number; die2: number }
     coin?: 'Cara' | 'Creu'
   }>({})
+  const intervalsRef = useRef<{ spin?: NodeJS.Timeout; progress?: NodeJS.Timeout }>({})
+
+  // Cleanup intervals on unmount
+  useEffect(() => {
+    return () => {
+      if (intervalsRef.current.spin) clearInterval(intervalsRef.current.spin)
+      if (intervalsRef.current.progress) clearInterval(intervalsRef.current.progress)
+    }
+  }, [])
 
   // Haptic feedback helper
   const vibrate = () => {
@@ -38,7 +51,11 @@ export default function RandomTab() {
   }
 
   // Cooldown handler with sweeping gradient animation and spinning effect
-  const startCooldown = async (generator: 'dice1' | 'dice2' | 'coin', finalResult: any) => {
+  const startCooldown = async (generator: 'dice1' | 'dice2' | 'coin', finalResult: RandomResult) => {
+    // Clear any existing intervals
+    if (intervalsRef.current.spin) clearInterval(intervalsRef.current.spin)
+    if (intervalsRef.current.progress) clearInterval(intervalsRef.current.progress)
+
     setActiveCooldown(generator)
     setCooldownProgress(0)
     
@@ -50,7 +67,7 @@ export default function RandomTab() {
     let spinStep = 0
 
     // Start spinning animation
-    const spinTimer = setInterval(() => {
+    intervalsRef.current.spin = setInterval(() => {
       spinStep++
       if (generator === 'dice1') {
         setSpinningValue({ dice1: (spinStep % 6) + 1 })
@@ -66,13 +83,13 @@ export default function RandomTab() {
       }
     }, spinInterval)
 
-    const interval = setInterval(() => {
+    intervalsRef.current.progress = setInterval(() => {
       currentStep++
       setCooldownProgress((currentStep / steps) * 100)
 
       if (currentStep >= steps) {
-        clearInterval(interval)
-        clearInterval(spinTimer)
+        if (intervalsRef.current.spin) clearInterval(intervalsRef.current.spin)
+        if (intervalsRef.current.progress) clearInterval(intervalsRef.current.progress)
         setActiveCooldown(null)
         setCooldownProgress(0)
         setSpinningValue({})
