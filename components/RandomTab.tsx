@@ -17,7 +17,7 @@ const initialStreaks: StreakData = {
 
 export default function RandomTab() {
   const [streaks, setStreaks] = useLocalStorage<StreakData>('randomStreaks', initialStreaks)
-  const [isGenerating, setIsGenerating] = useState(false)
+  const [activeCooldown, setActiveCooldown] = useState<'dice1' | 'dice2' | 'coin' | null>(null)
   const [cooldownProgress, setCooldownProgress] = useState(0)
   const [lastResult, setLastResult] = useState<{
     dice1?: number
@@ -32,23 +32,30 @@ export default function RandomTab() {
     }
   }
 
-  // Cooldown handler
-  const startCooldown = async () => {
-    setIsGenerating(true)
+  // Cooldown handler with fill and empty animation
+  const startCooldown = async (generator: 'dice1' | 'dice2' | 'coin') => {
+    setActiveCooldown(generator)
     setCooldownProgress(0)
     
-    const cooldownDuration = 2000 // 2 seconds
+    const cooldownDuration = 2000 // 2 seconds total (1s fill, 1s empty)
     const intervalTime = 20 // Update every 20ms for smooth animation
     const steps = cooldownDuration / intervalTime
     let currentStep = 0
 
     const interval = setInterval(() => {
       currentStep++
-      setCooldownProgress((currentStep / steps) * 100)
-      
+      const progress = (currentStep / steps) * 100
+
+      // First half: fill (0 to 100%), second half: empty (100 to 0%)
+      if (progress <= 50) {
+        setCooldownProgress(progress * 2) // 0-50% becomes 0-100%
+      } else {
+        setCooldownProgress(200 - progress * 2) // 50-100% becomes 100-0%
+      }
+
       if (currentStep >= steps) {
         clearInterval(interval)
-        setIsGenerating(false)
+        setActiveCooldown(null)
         setCooldownProgress(0)
       }
     }, intervalTime)
@@ -56,11 +63,10 @@ export default function RandomTab() {
 
   // Generator functions
   const rollOneDice = async () => {
-    if (isGenerating) return
-    
+    if (activeCooldown) return
+
     vibrate()
-    startCooldown()
-    
+
     const result = Math.floor(Math.random() * 6) + 1
     setLastResult(prev => ({ ...prev, dice1: result }))
     
@@ -77,14 +83,15 @@ export default function RandomTab() {
         }
       }
     })
+
+    startCooldown('dice1')
   }
 
   const rollTwoDice = async () => {
-    if (isGenerating) return
-    
+    if (activeCooldown) return
+
     vibrate()
-    startCooldown()
-    
+
     const die1 = Math.floor(Math.random() * 6) + 1
     const die2 = Math.floor(Math.random() * 6) + 1
     const sum = die1 + die2
@@ -104,14 +111,15 @@ export default function RandomTab() {
         }
       }
     })
+
+    startCooldown('dice2')
   }
 
   const flipCoin = async () => {
-    if (isGenerating) return
-    
+    if (activeCooldown) return
+
     vibrate()
-    startCooldown()
-    
+
     const result = Math.random() < 0.5 ? 'Cara' : 'Creu'
     setLastResult(prev => ({ ...prev, coin: result }))
     
@@ -128,26 +136,29 @@ export default function RandomTab() {
         }
       }
     })
+
+    startCooldown('coin')
   }
 
   return (
-    <div
-      className="relative p-4 space-y-4 max-w-md mx-auto transition-all duration-75"
-      style={{
-        background: isGenerating
-          ? `linear-gradient(to right, rgba(124, 58, 237, 0.15) ${cooldownProgress}%, transparent ${cooldownProgress}%)`
-          : 'transparent'
-      }}
-    >
+    <div className="relative p-4 space-y-4 max-w-md mx-auto">
       {/* One Dice */}
-      <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+      <div className="bg-white rounded-xl shadow-lg overflow-hidden relative">
         <button
           onClick={rollOneDice}
-          disabled={isGenerating}
-          className={`w-full p-6 ${
-            isGenerating ? 'cursor-not-allowed opacity-70' : 'hover:bg-gray-50 active:bg-gray-100'
+          disabled={activeCooldown !== null}
+          className={`w-full p-6 relative ${
+            activeCooldown !== null ? 'cursor-not-allowed' : 'hover:bg-gray-50'
           }`}
         >
+          {/* Cooldown bar */}
+          {activeCooldown === 'dice1' && (
+            <div
+              className="absolute bottom-0 left-0 h-1 bg-purple-600 transition-all duration-75 ease-linear"
+              style={{ width: `${cooldownProgress}%` }}
+            />
+          )}
+
           <div className="text-center">
             <div className="text-sm font-medium text-gray-600 mb-2">1 Dau (1d6)</div>
             <div className="h-20 flex items-center justify-center">
@@ -171,14 +182,22 @@ export default function RandomTab() {
       </div>
 
       {/* Two Dice */}
-      <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+      <div className="bg-white rounded-xl shadow-lg overflow-hidden relative">
         <button
           onClick={rollTwoDice}
-          disabled={isGenerating}
-          className={`w-full p-6 ${
-            isGenerating ? 'cursor-not-allowed opacity-70' : 'hover:bg-gray-50 active:bg-gray-100'
+          disabled={activeCooldown !== null}
+          className={`w-full p-6 relative ${
+            activeCooldown !== null ? 'cursor-not-allowed' : 'hover:bg-gray-50'
           }`}
         >
+          {/* Cooldown bar */}
+          {activeCooldown === 'dice2' && (
+            <div
+              className="absolute bottom-0 left-0 h-1 bg-purple-600 transition-all duration-75 ease-linear"
+              style={{ width: `${cooldownProgress}%` }}
+            />
+          )}
+
           <div className="text-center">
             <div className="text-sm font-medium text-gray-600 mb-2">2 Daus (2d6)</div>
             <div className="h-20 flex flex-col items-center justify-center">
@@ -208,14 +227,22 @@ export default function RandomTab() {
       </div>
 
       {/* Coin Flip */}
-      <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+      <div className="bg-white rounded-xl shadow-lg overflow-hidden relative">
         <button
           onClick={flipCoin}
-          disabled={isGenerating}
-          className={`w-full p-6 ${
-            isGenerating ? 'cursor-not-allowed opacity-70' : 'hover:bg-gray-50 active:bg-gray-100'
+          disabled={activeCooldown !== null}
+          className={`w-full p-6 relative ${
+            activeCooldown !== null ? 'cursor-not-allowed' : 'hover:bg-gray-50'
           }`}
         >
+          {/* Cooldown bar */}
+          {activeCooldown === 'coin' && (
+            <div
+              className="absolute bottom-0 left-0 h-1 bg-purple-600 transition-all duration-75 ease-linear"
+              style={{ width: `${cooldownProgress}%` }}
+            />
+          )}
+
           <div className="text-center">
             <div className="text-sm font-medium text-gray-600 mb-2">Moneda</div>
             <div className="h-20 flex items-center justify-center">
