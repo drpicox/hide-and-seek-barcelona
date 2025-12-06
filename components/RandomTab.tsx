@@ -131,24 +131,21 @@ export default function RandomTab() {
   }
 
   return (
-    <div className="relative p-4 space-y-4 max-w-md mx-auto">
-      {/* Global cooldown indicator - fixed at top, doesn't affect layout */}
-      {isGenerating && (
-        <div className="fixed top-0 left-0 right-0 z-50 h-1 bg-gray-200">
-          <div
-            className="bg-purple-600 h-full"
-            style={{ width: `${cooldownProgress}%`, transition: 'width 75ms linear' }}
-          />
-        </div>
-      )}
-
+    <div
+      className="relative p-4 space-y-4 max-w-md mx-auto transition-all duration-75"
+      style={{
+        background: isGenerating
+          ? `linear-gradient(to right, rgba(124, 58, 237, 0.15) ${cooldownProgress}%, transparent ${cooldownProgress}%)`
+          : 'transparent'
+      }}
+    >
       {/* One Dice */}
       <div className="bg-white rounded-xl shadow-lg overflow-hidden">
         <button
           onClick={rollOneDice}
           disabled={isGenerating}
           className={`w-full p-6 ${
-            isGenerating ? 'bg-gray-100 cursor-not-allowed' : 'bg-white hover:bg-gray-50 active:bg-gray-100'
+            isGenerating ? 'cursor-not-allowed opacity-70' : 'hover:bg-gray-50 active:bg-gray-100'
           }`}
         >
           <div className="text-center">
@@ -179,7 +176,7 @@ export default function RandomTab() {
           onClick={rollTwoDice}
           disabled={isGenerating}
           className={`w-full p-6 ${
-            isGenerating ? 'bg-gray-100 cursor-not-allowed' : 'bg-white hover:bg-gray-50 active:bg-gray-100'
+            isGenerating ? 'cursor-not-allowed opacity-70' : 'hover:bg-gray-50 active:bg-gray-100'
           }`}
         >
           <div className="text-center">
@@ -216,7 +213,7 @@ export default function RandomTab() {
           onClick={flipCoin}
           disabled={isGenerating}
           className={`w-full p-6 ${
-            isGenerating ? 'bg-gray-100 cursor-not-allowed' : 'bg-white hover:bg-gray-50 active:bg-gray-100'
+            isGenerating ? 'cursor-not-allowed opacity-70' : 'hover:bg-gray-50 active:bg-gray-100'
           }`}
         >
           <div className="text-center">

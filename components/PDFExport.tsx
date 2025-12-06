@@ -6,192 +6,284 @@ interface PDFExportProps {
 
 export default function PDFExport({ mode }: PDFExportProps) {
   const handlePrint = () => {
-    window.print()
-  }
+    const printWindow = window.open('', '_blank')
+    if (!printWindow) return
 
-  // Questions filtered by mode
-  const matchingQuestions = [
-    'Commercial Airport', 'Transit Line', "Station's Name Length", 'Street or Path',
-    '1st Admin. Division', '2nd Admin. Division', '3rd Admin. Division', '4th Admin. Division',
-    'Mountain', 'Landmass', 'Park', 'Amusement Park', 'Zoo', 'Aquarium',
-    'Golf Course', 'Museum', 'Movie Theater', 'Hospital', 'Library', 'Foreign Consulate'
-  ]
+    const matchingQuestions = [
+      'Commercial Airport', 'Transit Line', "Station's Name Length", 'Street or Path',
+      '1st Admin. Division', '2nd Admin. Division', '3rd Admin. Division', '4th Admin. Division',
+      'Mountain', 'Landmass', 'Park', 'Amusement Park', 'Zoo', 'Aquarium',
+      'Golf Course', 'Museum', 'Movie Theater', 'Hospital', 'Library', 'Foreign Consulate'
+    ]
 
-  const measuringQuestions = [
-    'A Commercial Airport', 'A High Speed Train Line', 'A Rail Station', 'An International Border',
-    'A 1st Admin. Div. Border', 'A 2nd Admin. Div. Border', 'Sea Level', 'A Body of Water',
-    'A Coastline', 'A Mountain', 'A Park', 'An Amusement Park', 'A Zoo', 'An Aquarium',
-    'A Golf Course', 'A Museum', 'A Movie Theater', 'A Hospital', 'A Library', 'A Foreign Consulate'
-  ]
+    const measuringQuestions = [
+      'Commercial Airport', 'High Speed Train', 'Rail Station', 'International Border',
+      '1st Admin. Border', '2nd Admin. Border', 'Sea Level', 'Body of Water',
+      'Coastline', 'Mountain', 'Park', 'Amusement Park', 'Zoo', 'Aquarium',
+      'Golf Course', 'Museum', 'Movie Theater', 'Hospital', 'Library', 'Foreign Consulate'
+    ]
 
-  const thermometerQuestions = mode === 'verySmall' 
-    ? ['200 m', '500 m', '1 km']
-    : ['1 km', '5 km']
+    const thermometerQuestions = mode === 'verySmall'
+      ? ['200 m', '500 m', '1 km']
+      : ['1 km', '5 km']
 
-  const radarQuestions = mode === 'verySmall'
-    ? ['200 m', '500 m', '1 km', '2 km']
-    : ['500 m', '1 km', '2 km', '5 km', '10 km', '15 km']
+    const radarQuestions = mode === 'verySmall'
+      ? ['200 m', '500 m', '1 km', '2 km']
+      : ['500 m', '1 km', '2 km', '5 km', '10 km', '15 km']
 
-  const photos = [
-    { name: 'A Tree', desc: 'Arbre complet' },
-    { name: 'The Sky', desc: 'Tel. al terra' },
-    { name: 'You', desc: 'Selfie braç estès' },
-    { name: 'Widest Street', desc: 'Dos costats' },
-    { name: 'Tallest Structure', desc: 'Des de perspectiva' },
-    { name: 'Building from Station', desc: 'Fora entrada' }
-  ]
+    const photos = [
+      { name: 'A Tree', desc: 'Full tree visible' },
+      { name: 'The Sky', desc: 'Phone flat on ground' },
+      { name: 'You', desc: 'Selfie, arm extended' },
+      { name: 'Widest Street', desc: 'Both sides visible' },
+      { name: 'Tallest Structure', desc: 'From your perspective' },
+      { name: 'Building from Station', desc: 'Outside entrance' }
+    ]
 
-  return (
-    <>
-      <button
-        onClick={handlePrint}
-        className="px-3 py-1.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors print:hidden"
-      >
-        📄 PDF ({mode === 'small' ? 'Small' : 'Very Small'})
-      </button>
-
-      <div className="hidden print:block print-content">
-        <style jsx global>{`
-          @media print {
-            @page {
-              size: A4;
-              margin: 8mm;
-            }
-            
-            body {
-              print-color-adjust: exact;
-              -webkit-print-color-adjust: exact;
-            }
-            
-            .print-content {
-              display: block !important;
-              font-size: 7.5pt;
-              line-height: 1.15;
-            }
-            
-            .no-print, header, nav, .bottom-nav {
-              display: none !important;
-            }
-          }
-        `}</style>
-
-        <div className="w-full">
-          {/* Header */}
-          <div className="mb-2 pb-1 border-b-2 border-gray-800">
-            <h1 className="text-lg font-bold">
-              Hide and Seek - Barcelona
-            </h1>
-            <p className="text-[8pt] text-gray-600">
-              Mode: {mode === 'small' ? 'Small (≤25km)' : 'Very Small (≤3km)'} | Hider: _______________________
-            </p>
+    const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Hide and Seek - ${mode === 'small' ? 'Small' : 'Very Small'}</title>
+  <style>
+    @page { size: A4; margin: 8mm; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 8pt;
+      line-height: 1.25;
+      color: #000;
+    }
+    .page { width: 100%; max-width: 190mm; margin: 0 auto; }
+    
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 2pt solid #000;
+      padding-bottom: 2mm;
+      margin-bottom: 3mm;
+    }
+    .title { font-size: 16pt; font-weight: bold; letter-spacing: -0.5pt; }
+    .subtitle { font-size: 8pt; color: #444; margin-top: 1mm; }
+    .mode-badge {
+      background: #000;
+      color: #fff;
+      padding: 1mm 3mm;
+      font-size: 7pt;
+      font-weight: bold;
+    }
+    .hider-box {
+      margin-top: 2mm;
+      font-size: 9pt;
+    }
+    .hider-line {
+      display: inline-block;
+      width: 45mm;
+      border-bottom: 1pt solid #000;
+      margin-left: 2mm;
+    }
+    
+    .content { display: flex; gap: 4mm; }
+    .col { flex: 1; display: flex; flex-direction: column; gap: 2.5mm; }
+    
+    .section {
+      border: 1.5pt solid #000;
+      break-inside: avoid;
+    }
+    .section-header {
+      background: #e0e0e0;
+      padding: 1.5mm 2mm;
+      font-weight: bold;
+      font-size: 8pt;
+      border-bottom: 1pt solid #000;
+    }
+    .section-hint {
+      font-weight: normal;
+      font-size: 6pt;
+      color: #444;
+      display: block;
+      margin-top: 0.5mm;
+    }
+    .section-body { padding: 1.5mm 2mm; }
+    
+    .q-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5mm 2mm; }
+    .q-grid.single-col { grid-template-columns: 1fr; }
+    
+    .q-item { display: flex; align-items: flex-start; gap: 1.5mm; }
+    .checkbox {
+      width: 3mm;
+      height: 3mm;
+      border: 1pt solid #000;
+      flex-shrink: 0;
+      margin-top: 0.3mm;
+    }
+    .q-text { font-size: 7pt; line-height: 1.3; }
+    .q-desc { font-size: 6pt; color: #666; }
+    
+    .photo-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 1.5mm;
+      padding: 1mm 0;
+      border-bottom: 0.5pt dotted #aaa;
+    }
+    .photo-item:last-child { border-bottom: none; }
+    
+    .notes-section { flex: 1; }
+    .notes-lines { padding-top: 1mm; }
+    .note-line {
+      height: 5mm;
+      border-bottom: 0.5pt solid #ccc;
+    }
+    
+    .footer {
+      margin-top: 2mm;
+      padding-top: 1.5mm;
+      border-top: 0.5pt solid #999;
+      text-align: center;
+      font-size: 6pt;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="header">
+      <div>
+        <div class="title">HIDE + SEEK</div>
+        <div class="subtitle">Investigation Notebook — Barcelona</div>
+        <div class="hider-box">Hider: <span class="hider-line"></span></div>
+      </div>
+      <div class="mode-badge">${mode === 'small' ? 'SMALL ≤25km' : 'VERY SMALL ≤3km'}</div>
+    </div>
+    
+    <div class="content">
+      <div class="col">
+        <div class="section">
+          <div class="section-header">
+            MATCHING (20)
+            <span class="section-hint">Is your nearest ___ the same as mine?</span>
           </div>
-
-          {/* Two-column layout */}
-          <div className="grid grid-cols-2 gap-2.5 text-[7.5pt]">
-            {/* Left Column */}
-            <div className="space-y-1.5">
-              {/* Matching */}
-              <div>
-                <h2 className="font-bold text-[9pt] mb-0.5 px-1 py-0.5 bg-gray-200">
-                  Matching (20)
-                </h2>
-                <div className="space-y-0">
-                  {matchingQuestions.map((q, i) => (
-                    <div key={i} className="flex items-start gap-1">
-                      <span className="inline-block w-3 h-3 border border-gray-400 mt-0.5 flex-shrink-0" />
-                      <span className="flex-1 leading-tight text-[7pt]">{q}</span>
-                    </div>
-                  ))}
+          <div class="section-body">
+            <div class="q-grid">
+              ${matchingQuestions.map(q => `
+                <div class="q-item">
+                  <div class="checkbox"></div>
+                  <div class="q-text">${q}</div>
                 </div>
-              </div>
-
-              {/* Thermometer */}
-              <div>
-                <h2 className="font-bold text-[9pt] mb-0.5 px-1 py-0.5 bg-gray-200">
-                  Thermometer ({thermometerQuestions.length})
-                </h2>
-                <div className="space-y-0">
-                  {thermometerQuestions.map((q, i) => (
-                    <div key={i} className="flex items-start gap-1">
-                      <span className="inline-block w-3 h-3 border border-gray-400 mt-0.5 flex-shrink-0" />
-                      <span className="flex-1 leading-tight text-[7pt]">{q}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Photos */}
-              <div>
-                <h2 className="font-bold text-[9pt] mb-0.5 px-1 py-0.5 bg-gray-200">
-                  Photos (6)
-                </h2>
-                <div className="space-y-0">
-                  {photos.map((p, i) => (
-                    <div key={i} className="flex items-start gap-1">
-                      <span className="inline-block w-3 h-3 border border-gray-400 mt-0.5 flex-shrink-0" />
-                      <div className="flex-1">
-                        <span className="leading-tight font-medium text-[7pt]">{p.name}</span>
-                        <span className="text-[6pt] text-gray-500 ml-1">({p.desc})</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Right Column */}
-            <div className="space-y-1.5">
-              {/* Measuring */}
-              <div>
-                <h2 className="font-bold text-[9pt] mb-0.5 px-1 py-0.5 bg-gray-200">
-                  Measuring (20)
-                </h2>
-                <div className="space-y-0">
-                  {measuringQuestions.map((q, i) => (
-                    <div key={i} className="flex items-start gap-1">
-                      <span className="inline-block w-3 h-3 border border-gray-400 mt-0.5 flex-shrink-0" />
-                      <span className="flex-1 leading-tight text-[7pt]">{q}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Radar */}
-              <div>
-                <h2 className="font-bold text-[9pt] mb-0.5 px-1 py-0.5 bg-gray-200">
-                  Radar ({radarQuestions.length})
-                </h2>
-                <div className="space-y-0">
-                  {radarQuestions.map((q, i) => (
-                    <div key={i} className="flex items-start gap-1">
-                      <span className="inline-block w-3 h-3 border border-gray-400 mt-0.5 flex-shrink-0" />
-                      <span className="flex-1 leading-tight text-[7pt]">{q}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Notes section */}
-              <div className="mt-1 p-1 border border-gray-400">
-                <h3 className="font-bold text-[8pt] mb-0.5">Notes:</h3>
-                <div className="space-y-0.5">
-                  <div className="h-5 border-b border-gray-300"></div>
-                  <div className="h-5 border-b border-gray-300"></div>
-                  <div className="h-5 border-b border-gray-300"></div>
-                  <div className="h-5 border-b border-gray-300"></div>
-                  <div className="h-5"></div>
-                </div>
-              </div>
+              `).join('')}
             </div>
           </div>
-
-          {/* Footer */}
-          <div className="mt-1.5 pt-0.5 border-t text-[6pt] text-gray-500 text-center">
-            Hide and Seek Barcelona - {new Date().toLocaleDateString()}
+        </div>
+        
+        <div class="section">
+          <div class="section-header">
+            THERMOMETER (${thermometerQuestions.length})
+            <span class="section-hint">I traveled ___. Am I hotter or colder?</span>
+          </div>
+          <div class="section-body">
+            <div class="q-grid single-col">
+              ${thermometerQuestions.map(q => `
+                <div class="q-item">
+                  <div class="checkbox"></div>
+                  <div class="q-text">${q}</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+        
+        <div class="section">
+          <div class="section-header">
+            PHOTOS (6)
+            <span class="section-hint">Send a photo of...</span>
+          </div>
+          <div class="section-body">
+            ${photos.map(p => `
+              <div class="photo-item">
+                <div class="checkbox"></div>
+                <div>
+                  <div class="q-text">${p.name}</div>
+                  <div class="q-desc">${p.desc}</div>
+                </div>
+              </div>
+            `).join('')}
           </div>
         </div>
       </div>
-    </>
+      
+      <div class="col">
+        <div class="section">
+          <div class="section-header">
+            MEASURING (20)
+            <span class="section-hint">Are you closer or further from ___?</span>
+          </div>
+          <div class="section-body">
+            <div class="q-grid">
+              ${measuringQuestions.map(q => `
+                <div class="q-item">
+                  <div class="checkbox"></div>
+                  <div class="q-text">${q}</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+        
+        <div class="section">
+          <div class="section-header">
+            RADAR (${radarQuestions.length})
+            <span class="section-hint">Are you within ___ of me?</span>
+          </div>
+          <div class="section-body">
+            <div class="q-grid single-col">
+              ${radarQuestions.map(q => `
+                <div class="q-item">
+                  <div class="checkbox"></div>
+                  <div class="q-text">${q}</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+        
+        <div class="section notes-section">
+          <div class="section-header">NOTES</div>
+          <div class="section-body">
+            <div class="notes-lines">
+              <div class="note-line"></div>
+              <div class="note-line"></div>
+              <div class="note-line"></div>
+              <div class="note-line"></div>
+              <div class="note-line"></div>
+              <div class="note-line"></div>
+              <div class="note-line"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="footer">
+      Hide and Seek Barcelona — ${new Date().toLocaleDateString()} — hideandseek.cat
+    </div>
+  </div>
+  <script>window.onload = function() { window.print(); };</script>
+</body>
+</html>`
+
+    printWindow.document.write(html)
+    printWindow.document.close()
+  }
+
+  return (
+    <button
+      onClick={handlePrint}
+      className="px-3 py-1.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+    >
+      📄 PDF ({mode === 'small' ? 'Small' : 'Very Small'})
+    </button>
   )
 }
-
