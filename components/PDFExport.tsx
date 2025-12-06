@@ -47,46 +47,41 @@ export default function PDFExport({ mode }: PDFExportProps) {
   <meta charset="UTF-8">
   <title>Hide and Seek - ${mode === 'small' ? 'Small' : 'Very Small'}</title>
   <style>
-    @page { size: A4; margin: 8mm; }
+    @page { size: A4; margin: 6mm; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      font-size: 9pt;
-      line-height: 1.4;
+      font-size: 8pt;
+      line-height: 1.3;
       color: #000;
     }
-    .page { width: 100%; max-width: 194mm; margin: 0 auto; }
+    .page { width: 100%; max-width: 198mm; margin: 0 auto; }
     
     .header {
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
-      border-bottom: 2pt solid #000;
-      padding-bottom: 3mm;
-      margin-bottom: 4mm;
+      align-items: center;
+      margin-bottom: 3mm;
     }
-    .title { font-size: 18pt; font-weight: bold; letter-spacing: -0.5pt; }
-    .subtitle { font-size: 9pt; color: #444; margin-top: 1mm; }
     .mode-badge {
       background: #000;
       color: #fff;
-      padding: 1.5mm 4mm;
-      font-size: 8pt;
+      padding: 1mm 3mm;
+      font-size: 7pt;
       font-weight: bold;
     }
     .hider-box {
-      margin-top: 3mm;
-      font-size: 10pt;
+      font-size: 9pt;
     }
     .hider-line {
       display: inline-block;
-      width: 50mm;
+      width: 45mm;
       border-bottom: 1pt solid #000;
       margin-left: 2mm;
     }
     
-    .content { display: flex; gap: 5mm; }
-    .col { flex: 1; display: flex; flex-direction: column; gap: 4mm; }
+    .content { display: flex; gap: 4mm; }
+    .col { flex: 1; display: flex; flex-direction: column; gap: 3mm; }
     
     .section {
       border: 1.5pt solid #000;
@@ -94,80 +89,67 @@ export default function PDFExport({ mode }: PDFExportProps) {
     }
     .section-header {
       background: #e0e0e0;
-      padding: 2mm 3mm;
+      padding: 1.5mm 2mm;
       font-weight: bold;
-      font-size: 9pt;
+      font-size: 8pt;
       border-bottom: 1pt solid #000;
     }
     .section-hint {
       font-weight: normal;
-      font-size: 7pt;
+      font-size: 6pt;
       color: #444;
       display: block;
-      margin-top: 1mm;
-    }
-    .section-body { padding: 3mm; }
-    
-    .q-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2mm 4mm; }
-    .q-grid.single-col { grid-template-columns: 1fr; }
-    
-    .q-item { display: flex; align-items: flex-start; gap: 2mm; }
-    .checkbox {
-      width: 4mm;
-      height: 4mm;
-      border: 1pt solid #000;
-      flex-shrink: 0;
       margin-top: 0.5mm;
     }
-    .q-text { font-size: 8pt; line-height: 1.4; }
-    .q-desc { font-size: 7pt; color: #666; }
+    .section-body { padding: 2mm; }
+    
+    .q-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5mm 3mm; }
+    .q-grid.single-col { grid-template-columns: 1fr; }
+    
+    .q-item { display: flex; align-items: flex-start; gap: 1.5mm; }
+    .checkbox {
+      width: 3.5mm;
+      height: 3.5mm;
+      border: 1pt solid #000;
+      flex-shrink: 0;
+      margin-top: 0.3mm;
+    }
+    .q-text { font-size: 7pt; line-height: 1.3; }
+    .q-desc { font-size: 6pt; color: #666; }
     
     .photo-item {
       display: flex;
       align-items: flex-start;
-      gap: 2mm;
-      padding: 2mm 0;
+      gap: 1.5mm;
+      padding: 1.5mm 0;
       border-bottom: 0.5pt dotted #aaa;
     }
     .photo-item:last-child { border-bottom: none; }
     
-    .notes-section { flex: 1; min-height: 40mm; }
-    .notes-lines { padding-top: 2mm; }
+    .notes-section { flex: 1; min-height: 35mm; }
+    .notes-lines { padding-top: 1.5mm; }
     .note-line {
-      height: 7mm;
+      height: 6mm;
       border-bottom: 0.5pt solid #ccc;
     }
     
     .quick-notes {
-      margin-top: 3mm;
-      padding: 2mm;
+      margin-top: 2mm;
+      padding: 1.5mm;
       border: 1pt dashed #999;
-      min-height: 15mm;
+      min-height: 12mm;
     }
     .quick-notes-title {
-      font-size: 7pt;
+      font-size: 6pt;
       color: #666;
-      margin-bottom: 1mm;
-    }
-    
-    .footer {
-      margin-top: 4mm;
-      padding-top: 2mm;
-      border-top: 0.5pt solid #999;
-      text-align: center;
-      font-size: 7pt;
-      color: #666;
+      margin-bottom: 0.5mm;
     }
   </style>
 </head>
 <body>
   <div class="page">
     <div class="header">
-      <div>
-        <div class="title">HIDE + SEEK</div>
-        <div class="subtitle">Investigation Notebook — Barcelona</div>
-        <div class="hider-box">Hider: <span class="hider-line"></span></div>
-      </div>
+      <div class="hider-box">Hider: <span class="hider-line"></span></div>
       <div class="mode-badge">${mode === 'small' ? 'SMALL ≤25km' : 'VERY SMALL ≤3km'}</div>
     </div>
     
@@ -279,15 +261,10 @@ export default function PDFExport({ mode }: PDFExportProps) {
               <div class="note-line"></div>
               <div class="note-line"></div>
               <div class="note-line"></div>
-              <div class="note-line"></div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-    
-    <div class="footer">
-      Hide and Seek Barcelona — ${new Date().toLocaleDateString()} — hideandseek.cat
     </div>
   </div>
   <script>window.onload = function() { window.print(); };</script>
