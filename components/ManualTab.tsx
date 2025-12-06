@@ -156,11 +156,11 @@ export default function ManualTab() {
                 // Get indentation and styling based on level
                 const getLevelStyle = () => {
                   if (section.level === 1) {
-                    return 'pl-2 font-bold text-base border-b border-gray-200 pb-2 mb-2'
+                    return 'pl-2 font-bold text-base border-b border-gray-300 pb-2 mb-2 text-gray-900'
                   } else if (section.level === 2) {
-                    return 'pl-4 font-semibold text-sm'
+                    return 'pl-4 font-semibold text-sm text-gray-800'
                   } else {
-                    return 'pl-8 text-sm font-normal'
+                    return 'pl-8 text-sm font-normal text-gray-700'
                   }
                 }
 
@@ -170,8 +170,8 @@ export default function ManualTab() {
                     onClick={() => goToSection(index)}
                     className={`block w-full text-left px-3 py-2 rounded-lg mb-1 transition-colors ${
                       index === currentIndex
-                        ? 'bg-purple-100 text-purple-900'
-                        : 'hover:bg-purple-50 text-gray-700'
+                        ? 'bg-purple-600 text-white font-semibold'
+                        : 'hover:bg-gray-100'
                     } ${getLevelStyle()}`}
                   >
                     {formatTitle(section.title)}
