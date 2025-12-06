@@ -47,41 +47,42 @@ export default function PDFExport({ mode }: PDFExportProps) {
   <meta charset="UTF-8">
   <title>Hide and Seek - ${mode === 'small' ? 'Small' : 'Very Small'}</title>
   <style>
-    @page { size: A4; margin: 6mm; }
+    @page { size: A4; margin: 10mm; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      font-size: 8pt;
-      line-height: 1.3;
+      font-size: 9pt;
+      line-height: 1.35;
       color: #000;
     }
-    .page { width: 100%; max-width: 198mm; margin: 0 auto; }
+    .page { width: 100%; max-width: 190mm; margin: 0 auto; }
     
     .header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 3mm;
+      margin-bottom: 4mm;
+      padding-top: 2mm;
     }
     .mode-badge {
       background: #000;
       color: #fff;
-      padding: 1mm 3mm;
-      font-size: 7pt;
+      padding: 1.5mm 4mm;
+      font-size: 8pt;
       font-weight: bold;
     }
     .hider-box {
-      font-size: 9pt;
+      font-size: 10pt;
     }
     .hider-line {
       display: inline-block;
-      width: 45mm;
+      width: 50mm;
       border-bottom: 1pt solid #000;
       margin-left: 2mm;
     }
     
-    .content { display: flex; gap: 4mm; }
-    .col { flex: 1; display: flex; flex-direction: column; gap: 3mm; }
+    .content { display: flex; gap: 5mm; }
+    .col { flex: 1; display: flex; flex-direction: column; gap: 4mm; }
     
     .section {
       border: 1.5pt solid #000;
@@ -89,60 +90,74 @@ export default function PDFExport({ mode }: PDFExportProps) {
     }
     .section-header {
       background: #e0e0e0;
-      padding: 1.5mm 2mm;
+      padding: 2mm 3mm;
       font-weight: bold;
-      font-size: 8pt;
+      font-size: 9pt;
       border-bottom: 1pt solid #000;
     }
     .section-hint {
       font-weight: normal;
-      font-size: 6pt;
+      font-size: 7pt;
       color: #444;
       display: block;
       margin-top: 0.5mm;
     }
-    .section-body { padding: 2mm; }
+    .section-body { padding: 3mm; }
     
-    .q-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5mm 3mm; }
+    .q-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2mm 4mm; }
     .q-grid.single-col { grid-template-columns: 1fr; }
     
-    .q-item { display: flex; align-items: flex-start; gap: 1.5mm; }
+    .q-item { display: flex; align-items: flex-start; gap: 2mm; }
     .checkbox {
-      width: 3.5mm;
-      height: 3.5mm;
+      width: 4mm;
+      height: 4mm;
       border: 1pt solid #000;
       flex-shrink: 0;
-      margin-top: 0.3mm;
+      margin-top: 0.5mm;
     }
-    .q-text { font-size: 7pt; line-height: 1.3; }
-    .q-desc { font-size: 6pt; color: #666; }
+    .q-text { font-size: 8pt; line-height: 1.4; }
+    .q-desc { font-size: 7pt; color: #666; }
+    
+    .custom-field {
+      display: flex;
+      align-items: center;
+      gap: 2mm;
+      margin-top: 2mm;
+      padding-top: 2mm;
+      border-top: 0.5pt dotted #aaa;
+    }
+    .custom-line {
+      flex: 1;
+      border-bottom: 1pt solid #000;
+      height: 4mm;
+    }
     
     .photo-item {
       display: flex;
       align-items: flex-start;
-      gap: 1.5mm;
-      padding: 1.5mm 0;
+      gap: 2mm;
+      padding: 2mm 0;
       border-bottom: 0.5pt dotted #aaa;
     }
     .photo-item:last-child { border-bottom: none; }
     
-    .notes-section { flex: 1; min-height: 35mm; }
-    .notes-lines { padding-top: 1.5mm; }
+    .notes-section { flex: 1; min-height: 40mm; }
+    .notes-lines { padding-top: 2mm; }
     .note-line {
-      height: 6mm;
+      height: 7mm;
       border-bottom: 0.5pt solid #ccc;
     }
     
     .quick-notes {
-      margin-top: 2mm;
-      padding: 1.5mm;
+      margin-top: 3mm;
+      padding: 2mm;
       border: 1pt dashed #999;
-      min-height: 12mm;
+      min-height: 14mm;
     }
     .quick-notes-title {
-      font-size: 6pt;
+      font-size: 7pt;
       color: #666;
-      margin-bottom: 0.5mm;
+      margin-bottom: 1mm;
     }
   </style>
 </head>
@@ -234,7 +249,7 @@ export default function PDFExport({ mode }: PDFExportProps) {
         
         <div class="section">
           <div class="section-header">
-            RADAR (${radarQuestions.length})
+            RADAR (${radarQuestions.length + 1})
             <span class="section-hint">Are you within ___ of me?</span>
           </div>
           <div class="section-body">
@@ -245,6 +260,10 @@ export default function PDFExport({ mode }: PDFExportProps) {
                   <div class="q-text">${q}</div>
                 </div>
               `).join('')}
+            </div>
+            <div class="custom-field">
+              <div class="checkbox"></div>
+              <div class="custom-line"></div>
             </div>
           </div>
         </div>
