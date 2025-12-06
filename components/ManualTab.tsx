@@ -41,6 +41,26 @@ export default function ManualTab() {
     }
   }
 
+  const handleContentClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLElement
+
+    // Check if clicking on a table of contents link (must have toc-link class)
+    if (target.tagName === 'LI' && target.classList.contains('toc-link')) {
+      const text = target.textContent || ''
+
+      // Find section by matching title
+      const sectionIndex = sections.findIndex(section => {
+        const cleanTitle = text.split(' - ')[0].trim()
+        return section.title.includes(cleanTitle) || cleanTitle.includes(section.title)
+      })
+
+      if (sectionIndex !== -1 && sectionIndex !== currentIndex) {
+        e.preventDefault()
+        goToSection(sectionIndex)
+      }
+    }
+  }
+
   if (sections.length === 0) {
     return (
       <div className="container mx-auto px-4 py-8 text-center">
@@ -127,19 +147,37 @@ export default function ManualTab() {
               </button>
             </div>
             <nav className="p-4 overflow-y-auto max-h-[60vh]">
-              {sections.map((section, index) => (
-                <button
-                  key={section.id}
-                  onClick={() => goToSection(index)}
-                  className={`block w-full text-left px-3 py-2 rounded-lg mb-1 transition-colors ${
-                    index === currentIndex
-                      ? 'bg-purple-100 text-purple-900 font-semibold'
-                      : 'hover:bg-gray-100 text-gray-700'
-                  } ${section.level === 1 ? 'font-bold' : 'pl-6'}`}
-                >
-                  {section.title}
-                </button>
-              ))}
+              {sections.map((section, index) => {
+                // Format title: only first letter uppercase
+                const formatTitle = (title: string) => {
+                  return title.charAt(0).toUpperCase() + title.slice(1).toLowerCase()
+                }
+
+                // Get indentation and styling based on level
+                const getLevelStyle = () => {
+                  if (section.level === 1) {
+                    return 'pl-2 font-bold text-base border-b border-gray-200 pb-2 mb-2'
+                  } else if (section.level === 2) {
+                    return 'pl-4 font-semibold text-sm'
+                  } else {
+                    return 'pl-8 text-sm font-normal'
+                  }
+                }
+
+                return (
+                  <button
+                    key={section.id}
+                    onClick={() => goToSection(index)}
+                    className={`block w-full text-left px-3 py-2 rounded-lg mb-1 transition-colors ${
+                      index === currentIndex
+                        ? 'bg-purple-100 text-purple-900'
+                        : 'hover:bg-purple-50 text-gray-700'
+                    } ${getLevelStyle()}`}
+                  >
+                    {formatTitle(section.title)}
+                  </button>
+                )
+              })}
             </nav>
           </div>
         </div>
@@ -149,6 +187,7 @@ export default function ManualTab() {
       <div
         ref={contentRef}
         className="flex-1 bg-white rounded-lg shadow-md p-6 overflow-y-auto"
+        onClick={handleContentClick}
       >
         {/* Section indicator */}
         <div className="text-sm text-purple-600 mb-2">
@@ -226,6 +265,32 @@ export default function ManualTab() {
           margin: 2rem 0;
           border: 0;
           border-top: 2px solid #e5e7eb;
+        }
+        /* Make TOC items look clickable */
+        .manual-content li.toc-link {
+          cursor: pointer;
+          color: #7c3aed;
+          transition: all 0.2s;
+          padding: 0.25rem 0.5rem;
+          margin: 0.25rem 0;
+          border-radius: 0.375rem;
+          font-size: 0.95rem;
+        }
+        .manual-content li.toc-link:hover {
+          background-color: #f3e8ff;
+          color: #6b21a8;
+          transform: translateX(6px);
+          font-weight: 500;
+        }
+        /* Nested TOC items styling */
+        .manual-content h3 + ul li.toc-link {
+          font-weight: 600;
+          color: #6b21a8;
+          border-left: 3px solid #c4b5fd;
+          padding-left: 0.75rem;
+        }
+        .manual-content h3 + ul li.toc-link:hover {
+          border-left-color: #7c3aed;
         }
       `}</style>
     </div>

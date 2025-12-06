@@ -1,6 +1,9 @@
 export function markdownToHTML(markdown: string): string {
   let html = markdown
 
+  // Check if this section contains CONTENIDOS
+  const hasContenidos = markdown.includes('## CONTENIDOS')
+
   // Escape HTML
   html = html.replace(/&/g, '&amp;')
   html = html.replace(/</g, '&lt;')
@@ -18,12 +21,16 @@ export function markdownToHTML(markdown: string): string {
   html = html.replace(/\*(.+?)\*/g, '<em>$1</em>')
 
   // Lists - Handle numbered and bulleted separately
-  html = html.replace(/^- (.+)$/gm, '<li class="ul-item">$1</li>')
+  // Add toc-link class if this is the CONTENIDOS section
+  const liClass = hasContenidos ? 'ul-item toc-link' : 'ul-item'
+  html = html.replace(/^- (.+)$/gm, `<li class="${liClass}">$1</li>`)
   html = html.replace(/^\d+\. (.+)$/gm, '<li class="ol-item">$1</li>')
 
   // Wrap lists in proper tags
-  html = html.replace(/(<li class="ul-item">.*?<\/li>\n?)+/g, function(match) {
-    return '<ul>' + match.replace(/ class="ul-item"/g, '') + '</ul>'
+  html = html.replace(/(<li class="[^"]*ul-item[^"]*">.*?<\/li>\n?)+/g, function(match) {
+    return '<ul>' + match.replace(/ class="[^"]*ul-item[^"]*"/g, function(classMatch) {
+      return classMatch.includes('toc-link') ? ' class="toc-link"' : ''
+    }) + '</ul>'
   })
   html = html.replace(/(<li class="ol-item">.*?<\/li>\n?)+/g, function(match) {
     return '<ol>' + match.replace(/ class="ol-item"/g, '') + '</ol>'
@@ -94,20 +101,78 @@ export function splitIntoSections(markdown: string): Section[] {
   let currentSection: Section | null = null
   let currentContent: string[] = []
 
-  for (const line of lines) {
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i]
     const h1Match = line.match(/^# (.+)$/)
     const h2Match = line.match(/^## (.+)$/)
+    const h3Match = line.match(/^### (.+)$/)
 
-    // Start a new section on h1 or h2
-    if (h1Match || h2Match) {
+    // Start a new section on h1, h2, or h3
+    if (h1Match || h2Match || h3Match) {
+      // Special handling: keep CONTENIDOS with intro
+      const isContentSection = h2Match && h2Match[1] === 'CONTENIDOS'
+      const isFirstMainSection = h2Match && h2Match[1].includes('SECCIÓN 1')
+
+      // For first main section, include first subsection
+      if (isFirstMainSection) {
+        if (currentSection) {
+          currentSection.content = currentContent.join('\n')
+          sections.push(currentSection)
+        }
+
+        currentSection = {
+          id: slugify(h2Match![1]),
+          title: h2Match![1],
+          level: 2,
+          content: ''
+        }
+        currentContent = [line]
+
+        // Include content until second h3
+        i++
+        let h3Count = 0
+        while (i < lines.length) {
+          const nextLine = lines[i]
+          const nextH3 = nextLine.match(/^### (.+)$/)
+
+          if (nextH3) {
+            h3Count++
+            if (h3Count >= 2) {
+              i--
+              break
+            }
+          }
+
+          currentContent.push(nextLine)
+          i++
+        }
+        continue
+      }
+
+      // Keep CONTENIDOS with title
+      if (isContentSection) {
+        if (currentSection) {
+          currentContent.push(line)
+        } else {
+          currentSection = {
+            id: 'intro',
+            title: 'HIDE+SEEK - Índex',
+            level: 1,
+            content: ''
+          }
+          currentContent = [line]
+        }
+        continue
+      }
+
       // Save previous section
       if (currentSection) {
         currentSection.content = currentContent.join('\n')
         sections.push(currentSection)
       }
 
-      const title = h1Match ? h1Match[1] : h2Match![1]
-      const level = h1Match ? 1 : 2
+      const title = h1Match ? h1Match[1] : h2Match ? h2Match[1] : h3Match![1]
+      const level = h1Match ? 1 : h2Match ? 2 : 3
 
       currentSection = {
         id: slugify(title),
@@ -119,11 +184,10 @@ export function splitIntoSections(markdown: string): Section[] {
     } else if (currentSection) {
       currentContent.push(line)
     } else {
-      // Content before first section - create intro section
       if (line.trim()) {
         currentSection = {
           id: 'intro',
-          title: 'Introducció',
+          title: 'HIDE+SEEK - Índex',
           level: 1,
           content: ''
         }
@@ -132,7 +196,6 @@ export function splitIntoSections(markdown: string): Section[] {
     }
   }
 
-  // Save last section
   if (currentSection) {
     currentSection.content = currentContent.join('\n')
     sections.push(currentSection)
