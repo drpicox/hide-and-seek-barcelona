@@ -2,20 +2,20 @@
   "name": "Hide and Seek Barcelona",
   "short_name": "H&S BCN",
   "description": "Joc d'amagar-se i cercar per Barcelona amb transport públic",
-  "start_url": "/",
+  "start_url": "/hide-and-seek-barcelona/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#7c3aed",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "/icon-192.png",
+      "src": "/hide-and-seek-barcelona/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/icon-512.png",
+      "src": "/hide-and-seek-barcelona/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
@@ -27,15 +27,15 @@
       "name": "Q&A",
       "short_name": "Q&A",
       "description": "Preguntes i respostes",
-      "url": "/?tab=qa",
-      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+      "url": "/hide-and-seek-barcelona/?tab=qa",
+      "icons": [{ "src": "/hide-and-seek-barcelona/icon-192.png", "sizes": "192x192" }]
     },
     {
       "name": "Mapa",
       "short_name": "Mapa",
       "description": "Veure el mapa",
-      "url": "/?tab=mapa",
-      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+      "url": "/hide-and-seek-barcelona/?tab=mapa",
+      "icons": [{ "src": "/hide-and-seek-barcelona/icon-192.png", "sizes": "192x192" }]
     }
   ]
 }
