@@ -10,9 +10,10 @@ import BottomNav from './BottomNav'
 import TrackingTab from './TrackingTab'
 import ManualTab from './ManualTab'
 import MapTab from './MapTab'
+import RandomTab from './RandomTab'
 
 export function HideAndSeekApp() {
-  const [activeTab, setActiveTab] = useState<TabId>('seguimiento')
+  const [activeTab, setActiveTab] = useState<TabId>('qa')
   const [activeHider, setActiveHider] = useLocalStorage<number>('hideAndSeekActiveHider', 0)
   const [verySmall, setVerySmall] = useLocalStorage<boolean>('hideAndSeekVerySmall', false)
   const [allHidersQuestions, setAllHidersQuestions] = useLocalStorage<AllHidersData>(
@@ -115,7 +116,7 @@ export function HideAndSeekApp() {
     }
   }
 
-  const showHeader = activeTab === 'seguimiento' || activeTab === 'manual'
+  const showHeader = activeTab === 'qa' || activeTab === 'manual'
 
   const isMapTab = activeTab === 'mapa' || activeTab === 'barris'
 
