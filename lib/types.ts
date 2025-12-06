@@ -51,13 +51,24 @@ export interface Stats {
 }
 
 // Multi-hider support
-export const HIDER_COLORS = [
-  { name: 'Hider 1', color: '#7c3aed', bg: 'rgba(124, 58, 237, 0.15)' },
-  { name: 'Hider 2', color: '#dc2626', bg: 'rgba(220, 38, 38, 0.15)' },
-  { name: 'Hider 3', color: '#059669', bg: 'rgba(5, 150, 105, 0.15)' },
+export interface HiderInfo {
+  name: string
+  color: string
+  bg: string
+  data: CategoryData
+}
+
+export type AllHidersData = HiderInfo[]
+
+export const DEFAULT_HIDER_COLORS = [
+  { color: '#7c3aed', bg: 'rgba(124, 58, 237, 0.15)' },
+  { color: '#dc2626', bg: 'rgba(220, 38, 38, 0.15)' },
+  { color: '#059669', bg: 'rgba(5, 150, 105, 0.15)' },
+  { color: '#ea580c', bg: 'rgba(234, 88, 12, 0.15)' },
+  { color: '#0891b2', bg: 'rgba(8, 145, 178, 0.15)' },
+  { color: '#db2777', bg: 'rgba(219, 39, 119, 0.15)' },
 ] as const
 
-export type AllHidersData = [CategoryData, CategoryData, CategoryData]
 
 export type TabId = 'qa' | 'random' | 'manual' | 'mapa' | 'barris'
 
