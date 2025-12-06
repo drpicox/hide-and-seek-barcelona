@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState } from 'react'
 import { useLocalStorage } from '@/lib/hooks/useLocalStorage'
 
 interface StreakData {
@@ -15,10 +15,6 @@ const initialStreaks: StreakData = {
   coin: { value: 'Cara', count: 0 }
 }
 
-type DiceResult = { die1: number; die2: number; sum: number }
-type CoinResult = 'Cara' | 'Creu'
-type RandomResult = number | DiceResult | CoinResult
-
 export default function RandomTab() {
   const [streaks, setStreaks] = useLocalStorage<StreakData>('randomStreaks', initialStreaks)
   const [activeCooldown, setActiveCooldown] = useState<'dice1' | 'dice2' | 'coin' | null>(null)
@@ -28,20 +24,6 @@ export default function RandomTab() {
     dice2?: { die1: number; die2: number; sum: number }
     coin?: 'Cara' | 'Creu'
   }>({})
-  const [spinningValue, setSpinningValue] = useState<{
-    dice1?: number
-    dice2?: { die1: number; die2: number }
-    coin?: 'Cara' | 'Creu'
-  }>({})
-  const intervalsRef = useRef<{ spin?: NodeJS.Timeout; progress?: NodeJS.Timeout }>({})
-
-  // Cleanup intervals on unmount
-  useEffect(() => {
-    return () => {
-      if (intervalsRef.current.spin) clearInterval(intervalsRef.current.spin)
-      if (intervalsRef.current.progress) clearInterval(intervalsRef.current.progress)
-    }
-  }, [])
 
   // Haptic feedback helper
   const vibrate = () => {
@@ -50,51 +32,25 @@ export default function RandomTab() {
     }
   }
 
-  // Cooldown handler with sweeping gradient animation and spinning effect
-  const startCooldown = async (generator: 'dice1' | 'dice2' | 'coin', finalResult: RandomResult) => {
-    // Clear any existing intervals
-    if (intervalsRef.current.spin) clearInterval(intervalsRef.current.spin)
-    if (intervalsRef.current.progress) clearInterval(intervalsRef.current.progress)
-
+  // Cooldown handler with sweeping gradient animation
+  const startCooldown = async (generator: 'dice1' | 'dice2' | 'coin') => {
     setActiveCooldown(generator)
     setCooldownProgress(0)
     
     const cooldownDuration = 2000 // 2 seconds
     const intervalTime = 20 // Update every 20ms for smooth animation
-    const spinInterval = 100 // Change spinning value every 100ms
     const steps = cooldownDuration / intervalTime
     let currentStep = 0
-    let spinStep = 0
 
-    // Start spinning animation
-    intervalsRef.current.spin = setInterval(() => {
-      spinStep++
-      if (generator === 'dice1') {
-        setSpinningValue({ dice1: (spinStep % 6) + 1 })
-      } else if (generator === 'dice2') {
-        setSpinningValue({ 
-          dice2: { 
-            die1: (spinStep % 6) + 1, 
-            die2: ((spinStep * 2) % 6) + 1 
-          } 
-        })
-      } else if (generator === 'coin') {
-        setSpinningValue({ coin: spinStep % 2 === 0 ? 'Cara' : 'Creu' })
-      }
-    }, spinInterval)
-
-    intervalsRef.current.progress = setInterval(() => {
+    const interval = setInterval(() => {
       currentStep++
-      setCooldownProgress((currentStep / steps) * 100)
+      // Progress goes from 0 to 130 (so the band fully exits on the right)
+      setCooldownProgress((currentStep / steps) * 130)
 
       if (currentStep >= steps) {
-        if (intervalsRef.current.spin) clearInterval(intervalsRef.current.spin)
-        if (intervalsRef.current.progress) clearInterval(intervalsRef.current.progress)
+        clearInterval(interval)
         setActiveCooldown(null)
         setCooldownProgress(0)
-        setSpinningValue({})
-        // Set the final result after animation completes
-        setLastResult(prev => ({ ...prev, [generator]: finalResult }))
       }
     }, intervalTime)
   }
@@ -103,7 +59,7 @@ export default function RandomTab() {
   const getGradientStyle = (isActive: boolean) => {
     if (!isActive) return {}
 
-    // Gradient band sweeps from left to right
+    // Gradient band sweeps from left to right, continuing past the edge
     const bandWidth = 30 // percentage width of the gradient band
     const start = cooldownProgress - bandWidth
     const end = cooldownProgress
@@ -124,6 +80,7 @@ export default function RandomTab() {
     if (activeCooldown) return
     vibrate()
     const result = Math.floor(Math.random() * 6) + 1
+    setLastResult(prev => ({ ...prev, dice1: result }))
     setStreaks(prev => {
       if (prev.dice1.value === result) {
         return { ...prev, dice1: { value: result, count: prev.dice1.count + 1 } }
@@ -131,7 +88,7 @@ export default function RandomTab() {
         return { ...prev, dice1: { value: result, count: 1 } }
       }
     })
-    startCooldown('dice1', result)
+    startCooldown('dice1')
   }
 
   const rollTwoDice = async () => {
@@ -141,6 +98,7 @@ export default function RandomTab() {
     const die2 = Math.floor(Math.random() * 6) + 1
     const sum = die1 + die2
     const result = { die1, die2, sum }
+    setLastResult(prev => ({ ...prev, dice2: result }))
     setStreaks(prev => {
       if (prev.dice2.value === sum) {
         return { ...prev, dice2: { value: sum, count: prev.dice2.count + 1 } }
@@ -148,13 +106,14 @@ export default function RandomTab() {
         return { ...prev, dice2: { value: sum, count: 1 } }
       }
     })
-    startCooldown('dice2', result)
+    startCooldown('dice2')
   }
 
   const flipCoin = async () => {
     if (activeCooldown) return
     vibrate()
     const result = Math.random() < 0.5 ? 'Cara' : 'Creu'
+    setLastResult(prev => ({ ...prev, coin: result }))
     setStreaks(prev => {
       if (prev.coin.value === result) {
         return { ...prev, coin: { value: result, count: prev.coin.count + 1 } }
@@ -162,7 +121,7 @@ export default function RandomTab() {
         return { ...prev, coin: { value: result, count: 1 } }
       }
     })
-    startCooldown('coin', result)
+    startCooldown('coin')
   }
 
   return (
@@ -180,16 +139,14 @@ export default function RandomTab() {
           <div className="text-center">
             <div className="text-sm font-medium text-gray-600 mb-2">1 Dau (1d6)</div>
             <div className="h-20 flex items-center justify-center">
-              {activeCooldown === 'dice1' && spinningValue.dice1 !== undefined ? (
-                <div className="text-6xl font-bold text-purple-400">{spinningValue.dice1}</div>
-              ) : lastResult.dice1 !== undefined ? (
+              {lastResult.dice1 !== undefined ? (
                 <div className="text-6xl font-bold text-purple-600">{lastResult.dice1}</div>
               ) : (
                 <div className="text-4xl text-gray-400">🎲</div>
               )}
             </div>
             <div className="h-6">
-              {streaks.dice1.count > 0 && lastResult.dice1 !== undefined && activeCooldown !== 'dice1' && (
+              {streaks.dice1.count > 0 && lastResult.dice1 !== undefined && (
                 <div className="text-sm text-gray-500">Sèrie: {streaks.dice1.count}×</div>
               )}
             </div>
@@ -210,15 +167,7 @@ export default function RandomTab() {
           <div className="text-center">
             <div className="text-sm font-medium text-gray-600 mb-2">2 Daus (2d6)</div>
             <div className="h-20 flex flex-col items-center justify-center">
-              {activeCooldown === 'dice2' && spinningValue.dice2 ? (
-                <>
-                  <div className="flex justify-center gap-4 mb-1">
-                    <span className="text-4xl font-bold text-purple-400">{spinningValue.dice2.die1}</span>
-                    <span className="text-4xl font-bold text-purple-400">{spinningValue.dice2.die2}</span>
-                  </div>
-                  <div className="text-xl font-semibold text-gray-500">Suma: {spinningValue.dice2.die1 + spinningValue.dice2.die2}</div>
-                </>
-              ) : lastResult.dice2 ? (
+              {lastResult.dice2 ? (
                 <>
                   <div className="flex justify-center gap-4 mb-1">
                     <span className="text-4xl font-bold text-purple-600">{lastResult.dice2.die1}</span>
@@ -231,7 +180,7 @@ export default function RandomTab() {
               )}
             </div>
             <div className="h-6">
-              {streaks.dice2.count > 0 && lastResult.dice2 && activeCooldown !== 'dice2' && (
+              {streaks.dice2.count > 0 && lastResult.dice2 && (
                 <div className="text-sm text-gray-500">Sèrie: {streaks.dice2.count}×</div>
               )}
             </div>
@@ -252,16 +201,14 @@ export default function RandomTab() {
           <div className="text-center">
             <div className="text-sm font-medium text-gray-600 mb-2">Moneda</div>
             <div className="h-20 flex items-center justify-center">
-              {activeCooldown === 'coin' && spinningValue.coin ? (
-                <div className="text-5xl font-bold text-purple-400">{spinningValue.coin}</div>
-              ) : lastResult.coin ? (
+              {lastResult.coin ? (
                 <div className="text-5xl font-bold text-purple-600">{lastResult.coin}</div>
               ) : (
                 <div className="text-4xl text-gray-400">🪙</div>
               )}
             </div>
             <div className="h-6">
-              {streaks.coin.count > 0 && lastResult.coin && activeCooldown !== 'coin' && (
+              {streaks.coin.count > 0 && lastResult.coin && (
                 <div className="text-sm text-gray-500">Sèrie: {streaks.coin.count}×</div>
               )}
             </div>
