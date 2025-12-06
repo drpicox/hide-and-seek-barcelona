@@ -59,7 +59,7 @@ export const HIDER_COLORS = [
 
 export type AllHidersData = [CategoryData, CategoryData, CategoryData]
 
-export type TabId = 'seguimiento' | 'manual' | 'mapa' | 'barris'
+export type TabId = 'qa' | 'random' | 'manual' | 'mapa' | 'barris'
 
 export interface MeasurementPoint {
   x: number

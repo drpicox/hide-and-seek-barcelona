@@ -139,7 +139,7 @@ export function HideAndSeekApp() {
           marginBottom: 'var(--bottom-nav-height)'
         }}
       >
-        {activeTab === 'seguimiento' ? (
+        {activeTab === 'qa' ? (
           <TrackingTab
             questions={questions}
             verySmall={verySmall}
@@ -147,6 +147,8 @@ export function HideAndSeekApp() {
             onNoteChange={handleNoteChange}
             activeHider={activeHider}
           />
+        ) : activeTab === 'random' ? (
+          <RandomTab />
         ) : activeTab === 'manual' ? (
           <ManualTab />
         ) : activeTab === 'mapa' ? (
