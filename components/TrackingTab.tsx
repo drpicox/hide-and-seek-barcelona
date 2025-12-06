@@ -3,6 +3,7 @@ import type { CategoryData, CategoryId } from '@/lib/types'
 import { HIDER_COLORS } from '@/lib/types'
 import { VERY_SMALL_QUESTIONS } from '@/lib/constants'
 import Category from './Category'
+import PDFExport from './PDFExport'
 
 interface TrackingTabProps {
   questions: CategoryData
@@ -41,6 +42,12 @@ export default function TrackingTab({ questions, verySmall, onToggleQuestion, on
           <span className="text-lg">⚠️</span> <strong>Mode Very Small:</strong> Divideix en dos tots els temps i distàncies de les cartes (arrodonir amunt)
         </div>
       )}
+
+      {/* PDF Export Buttons */}
+      <div className="flex gap-2 print:hidden">
+        <PDFExport mode="small" />
+        <PDFExport mode="verySmall" />
+      </div>
 
       <Category
         categoryId="matching"

@@ -131,47 +131,45 @@ export default function RandomTab() {
   }
 
   return (
-    <div className="p-4 space-y-4 max-w-md mx-auto">
+    <div className="relative p-4 space-y-4 max-w-md mx-auto">
+      {/* Global cooldown indicator - fixed at top, doesn't affect layout */}
+      {isGenerating && (
+        <div className="fixed top-0 left-0 right-0 z-50 h-1 bg-gray-200">
+          <div
+            className="bg-purple-600 h-full"
+            style={{ width: `${cooldownProgress}%`, transition: 'width 75ms linear' }}
+          />
+        </div>
+      )}
+
       {/* One Dice */}
       <div className="bg-white rounded-xl shadow-lg overflow-hidden">
         <button
           onClick={rollOneDice}
           disabled={isGenerating}
-          className={`w-full p-6 transition-all ${
-            isGenerating ? 'bg-gray-100 cursor-not-allowed' : 'bg-white hover:bg-gray-50 active:scale-95'
+          className={`w-full p-6 ${
+            isGenerating ? 'bg-gray-100 cursor-not-allowed' : 'bg-white hover:bg-gray-50 active:bg-gray-100'
           }`}
         >
           <div className="text-center">
             <div className="text-sm font-medium text-gray-600 mb-2">1 Dau (1d6)</div>
-            
-            {lastResult.dice1 !== undefined && (
-              <div className="text-6xl font-bold text-purple-600 my-4">
-                {lastResult.dice1}
-              </div>
-            )}
-            
-            {!lastResult.dice1 && !isGenerating && (
-              <div className="text-4xl text-gray-400 my-4">🎲</div>
-            )}
-            
-            {streaks.dice1.count > 0 && lastResult.dice1 !== undefined && (
-              <div className="text-sm text-gray-500 mt-2">
-                Sèrie: {streaks.dice1.count}×
-              </div>
-            )}
-          </div>
-          
-          {/* Cooldown indicator */}
-          {isGenerating && (
-            <div className="mt-4">
-              <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
-                <div
-                  className="bg-purple-600 h-full transition-all duration-75 ease-linear"
-                  style={{ width: `${cooldownProgress}%` }}
-                />
-              </div>
+            <div className="h-20 flex items-center justify-center">
+              {lastResult.dice1 !== undefined ? (
+                <div className="text-6xl font-bold text-purple-600">
+                  {lastResult.dice1}
+                </div>
+              ) : (
+                <div className="text-4xl text-gray-400">🎲</div>
+              )}
             </div>
-          )}
+            <div className="h-6">
+              {streaks.dice1.count > 0 && lastResult.dice1 !== undefined && (
+                <div className="text-sm text-gray-500">
+                  Sèrie: {streaks.dice1.count}×
+                </div>
+              )}
+            </div>
+          </div>
         </button>
       </div>
 
@@ -180,47 +178,35 @@ export default function RandomTab() {
         <button
           onClick={rollTwoDice}
           disabled={isGenerating}
-          className={`w-full p-6 transition-all ${
-            isGenerating ? 'bg-gray-100 cursor-not-allowed' : 'bg-white hover:bg-gray-50 active:scale-95'
+          className={`w-full p-6 ${
+            isGenerating ? 'bg-gray-100 cursor-not-allowed' : 'bg-white hover:bg-gray-50 active:bg-gray-100'
           }`}
         >
           <div className="text-center">
             <div className="text-sm font-medium text-gray-600 mb-2">2 Daus (2d6)</div>
-            
-            {lastResult.dice2 && (
-              <div className="my-4">
-                <div className="flex justify-center gap-4 mb-2">
-                  <span className="text-4xl font-bold text-purple-600">{lastResult.dice2.die1}</span>
-                  <span className="text-4xl font-bold text-purple-600">{lastResult.dice2.die2}</span>
-                </div>
-                <div className="text-2xl font-semibold text-gray-700">
-                  Suma: {lastResult.dice2.sum}
-                </div>
-              </div>
-            )}
-            
-            {!lastResult.dice2 && !isGenerating && (
-              <div className="text-4xl text-gray-400 my-4">🎲 🎲</div>
-            )}
-            
-            {streaks.dice2.count > 0 && lastResult.dice2 && (
-              <div className="text-sm text-gray-500 mt-2">
-                Sèrie: {streaks.dice2.count}×
-              </div>
-            )}
-          </div>
-          
-          {/* Cooldown indicator */}
-          {isGenerating && (
-            <div className="mt-4">
-              <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
-                <div
-                  className="bg-purple-600 h-full transition-all duration-75 ease-linear"
-                  style={{ width: `${cooldownProgress}%` }}
-                />
-              </div>
+            <div className="h-20 flex flex-col items-center justify-center">
+              {lastResult.dice2 ? (
+                <>
+                  <div className="flex justify-center gap-4 mb-1">
+                    <span className="text-4xl font-bold text-purple-600">{lastResult.dice2.die1}</span>
+                    <span className="text-4xl font-bold text-purple-600">{lastResult.dice2.die2}</span>
+                  </div>
+                  <div className="text-xl font-semibold text-gray-700">
+                    Suma: {lastResult.dice2.sum}
+                  </div>
+                </>
+              ) : (
+                <div className="text-4xl text-gray-400">🎲 🎲</div>
+              )}
             </div>
-          )}
+            <div className="h-6">
+              {streaks.dice2.count > 0 && lastResult.dice2 && (
+                <div className="text-sm text-gray-500">
+                  Sèrie: {streaks.dice2.count}×
+                </div>
+              )}
+            </div>
+          </div>
         </button>
       </div>
 
@@ -229,44 +215,31 @@ export default function RandomTab() {
         <button
           onClick={flipCoin}
           disabled={isGenerating}
-          className={`w-full p-6 transition-all ${
-            isGenerating ? 'bg-gray-100 cursor-not-allowed' : 'bg-white hover:bg-gray-50 active:scale-95'
+          className={`w-full p-6 ${
+            isGenerating ? 'bg-gray-100 cursor-not-allowed' : 'bg-white hover:bg-gray-50 active:bg-gray-100'
           }`}
         >
           <div className="text-center">
             <div className="text-sm font-medium text-gray-600 mb-2">Moneda</div>
-            
-            {lastResult.coin && (
-              <div className="text-5xl font-bold text-purple-600 my-4">
-                {lastResult.coin}
-              </div>
-            )}
-            
-            {!lastResult.coin && !isGenerating && (
-              <div className="text-4xl text-gray-400 my-4">🪙</div>
-            )}
-            
-            {streaks.coin.count > 0 && lastResult.coin && (
-              <div className="text-sm text-gray-500 mt-2">
-                Sèrie: {streaks.coin.count}×
-              </div>
-            )}
-          </div>
-          
-          {/* Cooldown indicator */}
-          {isGenerating && (
-            <div className="mt-4">
-              <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
-                <div
-                  className="bg-purple-600 h-full transition-all duration-75 ease-linear"
-                  style={{ width: `${cooldownProgress}%` }}
-                />
-              </div>
+            <div className="h-20 flex items-center justify-center">
+              {lastResult.coin ? (
+                <div className="text-5xl font-bold text-purple-600">
+                  {lastResult.coin}
+                </div>
+              ) : (
+                <div className="text-4xl text-gray-400">🪙</div>
+              )}
             </div>
-          )}
+            <div className="h-6">
+              {streaks.coin.count > 0 && lastResult.coin && (
+                <div className="text-sm text-gray-500">
+                  Sèrie: {streaks.coin.count}×
+                </div>
+              )}
+            </div>
+          </div>
         </button>
       </div>
     </div>
   )
 }
-
