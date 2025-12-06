@@ -252,7 +252,7 @@ export default function RandomTab() {
                     </span>
                   </div>
                   <div className={`text-xl font-semibold transition-colors ${dice2Display.isSpinning ? 'text-gray-500' : 'text-gray-700'}`}>
-                    Suma: {dice2Display.isSpinning ? dice2Display.value.die1 + dice2Display.value.die2 : dice2Display.value.sum}
+                    Suma: {dice2Display.value.die1 + dice2Display.value.die2}
                   </div>
                 </>
               ) : (
