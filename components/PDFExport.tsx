@@ -42,7 +42,7 @@ export default function PDFExport({ mode }: PDFExportProps) {
 
     const html = `
 <!DOCTYPE html>
-<html>
+<html lang="ca">
 <head>
   <meta charset="UTF-8">
   <title>Hide and Seek - ${mode === 'small' ? 'Small' : 'Very Small'}</title>
@@ -51,42 +51,42 @@ export default function PDFExport({ mode }: PDFExportProps) {
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      font-size: 8pt;
-      line-height: 1.25;
+      font-size: 9pt;
+      line-height: 1.4;
       color: #000;
     }
-    .page { width: 100%; max-width: 190mm; margin: 0 auto; }
+    .page { width: 100%; max-width: 194mm; margin: 0 auto; }
     
     .header {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
       border-bottom: 2pt solid #000;
-      padding-bottom: 2mm;
-      margin-bottom: 3mm;
+      padding-bottom: 3mm;
+      margin-bottom: 4mm;
     }
-    .title { font-size: 16pt; font-weight: bold; letter-spacing: -0.5pt; }
-    .subtitle { font-size: 8pt; color: #444; margin-top: 1mm; }
+    .title { font-size: 18pt; font-weight: bold; letter-spacing: -0.5pt; }
+    .subtitle { font-size: 9pt; color: #444; margin-top: 1mm; }
     .mode-badge {
       background: #000;
       color: #fff;
-      padding: 1mm 3mm;
-      font-size: 7pt;
+      padding: 1.5mm 4mm;
+      font-size: 8pt;
       font-weight: bold;
     }
     .hider-box {
-      margin-top: 2mm;
-      font-size: 9pt;
+      margin-top: 3mm;
+      font-size: 10pt;
     }
     .hider-line {
       display: inline-block;
-      width: 45mm;
+      width: 50mm;
       border-bottom: 1pt solid #000;
       margin-left: 2mm;
     }
     
-    .content { display: flex; gap: 4mm; }
-    .col { flex: 1; display: flex; flex-direction: column; gap: 2.5mm; }
+    .content { display: flex; gap: 5mm; }
+    .col { flex: 1; display: flex; flex-direction: column; gap: 4mm; }
     
     .section {
       border: 1.5pt solid #000;
@@ -94,56 +94,68 @@ export default function PDFExport({ mode }: PDFExportProps) {
     }
     .section-header {
       background: #e0e0e0;
-      padding: 1.5mm 2mm;
+      padding: 2mm 3mm;
       font-weight: bold;
-      font-size: 8pt;
+      font-size: 9pt;
       border-bottom: 1pt solid #000;
     }
     .section-hint {
       font-weight: normal;
-      font-size: 6pt;
+      font-size: 7pt;
       color: #444;
       display: block;
-      margin-top: 0.5mm;
+      margin-top: 1mm;
     }
-    .section-body { padding: 1.5mm 2mm; }
+    .section-body { padding: 3mm; }
     
-    .q-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5mm 2mm; }
+    .q-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2mm 4mm; }
     .q-grid.single-col { grid-template-columns: 1fr; }
     
-    .q-item { display: flex; align-items: flex-start; gap: 1.5mm; }
+    .q-item { display: flex; align-items: flex-start; gap: 2mm; }
     .checkbox {
-      width: 3mm;
-      height: 3mm;
+      width: 4mm;
+      height: 4mm;
       border: 1pt solid #000;
       flex-shrink: 0;
-      margin-top: 0.3mm;
+      margin-top: 0.5mm;
     }
-    .q-text { font-size: 7pt; line-height: 1.3; }
-    .q-desc { font-size: 6pt; color: #666; }
+    .q-text { font-size: 8pt; line-height: 1.4; }
+    .q-desc { font-size: 7pt; color: #666; }
     
     .photo-item {
       display: flex;
       align-items: flex-start;
-      gap: 1.5mm;
-      padding: 1mm 0;
+      gap: 2mm;
+      padding: 2mm 0;
       border-bottom: 0.5pt dotted #aaa;
     }
     .photo-item:last-child { border-bottom: none; }
     
-    .notes-section { flex: 1; }
-    .notes-lines { padding-top: 1mm; }
+    .notes-section { flex: 1; min-height: 40mm; }
+    .notes-lines { padding-top: 2mm; }
     .note-line {
-      height: 5mm;
+      height: 7mm;
       border-bottom: 0.5pt solid #ccc;
     }
     
+    .quick-notes {
+      margin-top: 3mm;
+      padding: 2mm;
+      border: 1pt dashed #999;
+      min-height: 15mm;
+    }
+    .quick-notes-title {
+      font-size: 7pt;
+      color: #666;
+      margin-bottom: 1mm;
+    }
+    
     .footer {
-      margin-top: 2mm;
-      padding-top: 1.5mm;
+      margin-top: 4mm;
+      padding-top: 2mm;
       border-top: 0.5pt solid #999;
       text-align: center;
-      font-size: 6pt;
+      font-size: 7pt;
       color: #666;
     }
   </style>
@@ -174,6 +186,9 @@ export default function PDFExport({ mode }: PDFExportProps) {
                   <div class="q-text">${q}</div>
                 </div>
               `).join('')}
+            </div>
+            <div class="quick-notes">
+              <div class="quick-notes-title">Notes:</div>
             </div>
           </div>
         </div>
@@ -229,6 +244,9 @@ export default function PDFExport({ mode }: PDFExportProps) {
                 </div>
               `).join('')}
             </div>
+            <div class="quick-notes">
+              <div class="quick-notes-title">Notes:</div>
+            </div>
           </div>
         </div>
         
@@ -250,9 +268,11 @@ export default function PDFExport({ mode }: PDFExportProps) {
         </div>
         
         <div class="section notes-section">
-          <div class="section-header">NOTES</div>
+          <div class="section-header">GENERAL NOTES</div>
           <div class="section-body">
             <div class="notes-lines">
+              <div class="note-line"></div>
+              <div class="note-line"></div>
               <div class="note-line"></div>
               <div class="note-line"></div>
               <div class="note-line"></div>

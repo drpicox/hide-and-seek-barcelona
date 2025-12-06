@@ -57,17 +57,11 @@ export default function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
             stroke="currentColor"
             viewBox="0 0 24 24"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M4 6h16M4 12h16M4 18h16"
-            />
-            <circle cx="7" cy="6" r="1.5" fill="currentColor" />
-            <circle cx="7" cy="18" r="1.5" fill="currentColor" />
-            <circle cx="12" cy="12" r="1.5" fill="currentColor" />
-            <circle cx="17" cy="6" r="1.5" fill="currentColor" />
-            <circle cx="17" cy="18" r="1.5" fill="currentColor" />
+            {/* Dice icon */}
+            <rect x="3" y="3" width="18" height="18" rx="3" strokeWidth={2} />
+            <circle cx="8" cy="8" r="1.5" fill="currentColor" stroke="none" />
+            <circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none" />
+            <circle cx="16" cy="16" r="1.5" fill="currentColor" stroke="none" />
           </svg>
           <span className="text-[10px] font-medium">Random</span>
         </button>

@@ -465,6 +465,13 @@ export default function MapViewer({
           <button onClick={handleReset} className="px-2 py-1 rounded text-xs font-medium bg-gray-200 text-gray-700">
             Reset
           </button>
+          <a
+            href={`${basePath}${mapData.imagePath}`}
+            download={mapData.name.replace(/ /g, '_') + '.png'}
+            className="px-2 py-1 rounded text-xs font-medium bg-green-600 text-white hover:bg-green-700"
+          >
+            📥 Baixar
+          </a>
         </div>
       )}
 
