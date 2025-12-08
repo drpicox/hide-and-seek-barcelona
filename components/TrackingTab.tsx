@@ -38,7 +38,7 @@ export default function TrackingTab({ questions, verySmall, onToggleQuestion, on
       {/* Very Small Banner */}
       {verySmall && (
         <div className="bg-yellow-400 text-yellow-900 text-center py-3 px-4 text-sm font-medium rounded-lg shadow-md">
-          <span className="text-lg">⚠️</span> <strong>Mode Very Small:</strong> Divideix en dos tots els temps i distàncies de les cartes (arrodonir amunt)
+          <span className="text-lg">⚠️</span> <strong>Mode Very Small:</strong> Divideix en dos tots els temps i distàncies S (Small) de les cartes en paper (arrodonir amunt)
         </div>
       )}
 

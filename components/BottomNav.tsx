@@ -82,10 +82,12 @@ export default function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
             stroke="currentColor"
             viewBox="0 0 24 24"
           >
-            {/* Cards stack icon */}
-            <rect x="4" y="6" width="16" height="12" rx="2" strokeWidth={2} />
-            <path d="M6 6L6 4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2" strokeWidth={2} />
-            <line x1="9" y1="12" x2="15" y2="12" strokeWidth={2} strokeLinecap="round" />
+            {/* Playing cards icon - múltiples cartes apilades */}
+            <rect x="5" y="7" width="14" height="10" rx="1.5" strokeWidth={2} />
+            <rect x="6" y="5" width="14" height="10" rx="1.5" strokeWidth={1.5} opacity="0.6" />
+            <rect x="7" y="3" width="14" height="10" rx="1.5" strokeWidth={1} opacity="0.3" />
+            {/* Símbol al centre de la carta frontal */}
+            <path d="M12 10 L13 12 L12 14 L11 12 Z" fill="currentColor" />
           </svg>
           <span className="text-[10px] font-medium">Cartes</span>
         </button>
