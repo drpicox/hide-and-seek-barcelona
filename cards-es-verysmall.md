@@ -115,7 +115,7 @@ Durante las próximas tres preguntas, puedes robar (no quedarte) una carta adici
 ---
 
 ### Maldición de la Nota de Rescate
-**Coste de lanzamiento:** Deletrea "nota de rescate" como una nota de rescate (sin usar esta carta).
+**Coste de lanzamiento:** Escribe "nota de rescate" como una nota de rescate (sin usar esta carta).
 
 La próxima pregunta que hagan los buscadores debe estar compuesta de palabras y letras recortadas de cualquier material impreso. La pregunta debe ser coherente e incluir al menos 5 palabras.
 

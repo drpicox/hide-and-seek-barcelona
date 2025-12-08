@@ -343,7 +343,7 @@ export default function CardsTab({ verySmall }: CardsTabProps) {
           onClick={() => setSelectedCard(null)}
         >
           <div
-            className={`max-w-2xl w-full rounded-2xl p-6 ${getCardColor(selectedCard.type)} border-4 max-h-[90vh] overflow-y-auto shadow-2xl`}
+            className={`max-w-2xl w-full rounded-2xl p-5 ${getCardColor(selectedCard.type)} border-4 max-h-[90vh] overflow-y-auto shadow-2xl`}
             onClick={(e) => e.stopPropagation()}
           >
             {(() => {
@@ -352,40 +352,40 @@ export default function CardsTab({ verySmall }: CardsTabProps) {
 
               return (
                 <>
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-center gap-3">
-                      <span className={`text-sm px-3 py-1.5 rounded-full font-bold ${getCardBadgeColor(selectedCard.type)} shadow-lg`}>
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <span className={`text-xs px-2 py-1 rounded-full font-bold ${getCardBadgeColor(selectedCard.type)} shadow-lg`}>
                         {getCardTypeLabel(selectedCard.type)}
                       </span>
-                      <span className="text-sm px-3 py-1.5 rounded-full font-bold bg-gray-600 text-white shadow-lg">
+                      <span className="text-xs px-2 py-1 rounded-full font-bold bg-gray-600 text-white shadow-lg">
                         {verySmall ? 'Very Small (V)' : 'Small (S)'}
                       </span>
                     </div>
                     <button
                       onClick={() => setSelectedCard(null)}
-                      className="text-2xl font-bold opacity-50 hover:opacity-100 transition-opacity w-8 h-8 flex items-center justify-center"
+                      className="text-xl font-bold opacity-50 hover:opacity-100 transition-opacity w-7 h-7 flex items-center justify-center"
                     >
                       ✕
                     </button>
                   </div>
 
-                  <h2 className="text-3xl font-bold mb-4">{def.title}</h2>
+                  <h2 className="text-2xl font-bold mb-3">{def.title}</h2>
 
                   {def.cost && (
-                    <div className="mb-4 p-4 bg-white bg-opacity-60 rounded-xl border-2 border-current border-opacity-20">
-                      <p className="text-base font-bold opacity-75 mb-2">Coste de jugar:</p>
-                      <p className="text-base leading-relaxed">{formatCardText(def.cost, verySmall)}</p>
+                    <div className="mb-3 p-3 bg-white bg-opacity-60 rounded-xl border-2 border-current border-opacity-20">
+                      <p className="text-sm font-bold opacity-75 mb-1">Coste de jugar:</p>
+                      <p className="text-sm leading-relaxed">{formatCardText(def.cost, verySmall)}</p>
                     </div>
                   )}
 
-                  <div className="text-lg leading-relaxed whitespace-pre-wrap mb-6">
+                  <div className="text-base leading-relaxed whitespace-pre-wrap mb-4">
                     {formatCardText(def.text, verySmall)}
                   </div>
 
-                  <div className="mt-6 pt-4 border-t-2 border-current border-opacity-20 flex gap-3">
+                  <div className="mt-4 pt-3 border-t-2 border-current border-opacity-20 flex gap-2">
                     <button
                       onClick={() => setSelectedCard(null)}
-                      className="flex-1 px-6 py-3 bg-white bg-opacity-60 hover:bg-opacity-100 rounded-xl font-bold text-base transition-colors border-2 border-current border-opacity-20"
+                      className="flex-1 px-4 py-2 bg-white bg-opacity-60 hover:bg-opacity-100 rounded-xl font-bold text-sm transition-colors border-2 border-current border-opacity-20"
                     >
                       Tancar
                     </button>
@@ -394,7 +394,7 @@ export default function CardsTab({ verySmall }: CardsTabProps) {
                         handleDiscard(selectedCard)
                         setSelectedCard(null)
                       }}
-                      className="flex-1 px-6 py-3 bg-red-500 text-white hover:bg-red-600 rounded-xl font-bold text-base transition-colors shadow-lg"
+                      className="flex-1 px-4 py-2 bg-red-500 text-white hover:bg-red-600 rounded-xl font-bold text-sm transition-colors shadow-lg"
                     >
                       Descartar
                     </button>
