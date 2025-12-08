@@ -38,7 +38,6 @@ export default function MapViewer({
   const [editingMarker, setEditingMarker] = useState<MapMarker | null>(null)
   const [showSidebar, setShowSidebar] = useState(false)
   const [showStations, setShowStations] = useState(false)
-  const [selectedStation, setSelectedStation] = useState<{ name: string; x: number; y: number } | null>(null)
   const [nearestStationInfo, setNearestStationInfo] = useState<{ name: string; distance: number; x: number; y: number } | null>(null)
   const [imageSize, setImageSize] = useState({ width: 0, height: 0 })
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 })
@@ -539,80 +538,61 @@ export default function MapViewer({
           {isGameMap && showStations && STATIONS_PLANOLJOC.map((station, idx) => (
             <div
               key={idx}
-              className="absolute cursor-pointer"
+              className="absolute pointer-events-none"
               style={{
                 left: `${station.x}px`,
                 top: `${station.y}px`,
-                transform: 'translate(-50%, -50%)',
-                pointerEvents: 'auto',
-                zIndex: 20
-              }}
-              onClick={(e) => {
-                e.stopPropagation()
-                const newStation = selectedStation?.name === station.name ? null : station
-                setSelectedStation(newStation)
-                if (newStation) {
-                  console.log('Estació seleccionada:', newStation.name)
-                  console.log('Radi del cercle (px):', 400 / metersPerPixel)
-                  console.log('Diàmetre del cercle (px):', 400 / metersPerPixel * 2)
-                  console.log('metersPerPixel:', metersPerPixel)
-                }
+                transform: 'translate(-50%, -50%)'
               }}
             >
-              <div className={`w-3 h-3 rounded-full border-2 shadow-lg transition-all ${
-                selectedStation?.name === station.name 
-                  ? 'bg-yellow-400 border-yellow-600 w-4 h-4' 
-                  : 'bg-blue-600 border-white'
-              }`} />
-              <div className={`absolute left-1/2 top-full -translate-x-1/2 mt-0.5 text-white text-[8px] px-1 rounded whitespace-nowrap ${
-                selectedStation?.name === station.name 
-                  ? 'bg-yellow-600/90 font-bold' 
-                  : 'bg-blue-600/90'
-              }`}>
+              <div className="w-3 h-3 bg-blue-600 rounded-full border-2 border-white shadow-lg" />
+              <div className="absolute left-1/2 top-full -translate-x-1/2 mt-0.5 bg-blue-600/90 text-white text-[8px] px-1 rounded whitespace-nowrap">
                 {station.name}
               </div>
             </div>
           ))}
 
-          {/* 400m Circle around selected station */}
-          {selectedStation && (
-            <div
-              className="absolute pointer-events-none"
-              style={{
-                left: `${selectedStation.x}px`,
-                top: `${selectedStation.y}px`,
-                transform: 'translate(-50%, -50%)',
-                zIndex: 10
-              }}
-            >
-              <div
-                className="rounded-full border-8 bg-yellow-300/30"
-                style={{
-                  width: `${400 / metersPerPixel * 2}px`,
-                  height: `${400 / metersPerPixel * 2}px`,
-                  borderColor: 'rgba(234, 179, 8, 0.8)',
-                  boxShadow: '0 0 30px rgba(234, 179, 8, 0.6), inset 0 0 30px rgba(234, 179, 8, 0.2)'
-                }}
-              />
-              {/* Label for the circle */}
-              <div className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-full mb-2 bg-yellow-600 text-white text-sm px-3 py-1.5 rounded-lg font-bold whitespace-nowrap shadow-lg">
-                🎯 Àrea de joc (400m)
-              </div>
-            </div>
-          )}
-
           {/* Nearest Station Highlight */}
           {nearestStationInfo && (
-            <div
-              className="absolute pointer-events-none"
-              style={{
-                left: `${nearestStationInfo.x}px`,
-                top: `${nearestStationInfo.y}px`,
-                transform: 'translate(-50%, -50%)'
-              }}
-            >
-              <div className="w-6 h-6 bg-yellow-400 rounded-full border-2 border-yellow-600 shadow-lg animate-pulse" />
-            </div>
+            <>
+              {/* Cercle de 400m al voltant de l'estació més propera */}
+              <div
+                className="absolute pointer-events-none"
+                style={{
+                  left: `${nearestStationInfo.x}px`,
+                  top: `${nearestStationInfo.y}px`,
+                  transform: 'translate(-50%, -50%)',
+                  zIndex: 9
+                }}
+              >
+                <div
+                  className="rounded-full border-8 bg-yellow-300/30"
+                  style={{
+                    width: `${400 / metersPerPixel * 2}px`,
+                    height: `${400 / metersPerPixel * 2}px`,
+                    borderColor: 'rgba(234, 179, 8, 0.8)',
+                    boxShadow: '0 0 30px rgba(234, 179, 8, 0.6), inset 0 0 30px rgba(234, 179, 8, 0.2)'
+                  }}
+                />
+                {/* Label for the circle */}
+                <div className="absolute left-1/2 bottom-full -translate-x-1/2 mb-2 bg-yellow-600 text-white text-sm px-3 py-1.5 rounded-lg font-bold whitespace-nowrap shadow-lg">
+                  🎯 Àrea de joc (400m)
+                </div>
+              </div>
+
+              {/* Punt de l'estació més propera */}
+              <div
+                className="absolute pointer-events-none"
+                style={{
+                  left: `${nearestStationInfo.x}px`,
+                  top: `${nearestStationInfo.y}px`,
+                  transform: 'translate(-50%, -50%)',
+                  zIndex: 10
+                }}
+              >
+                <div className="w-6 h-6 bg-yellow-400 rounded-full border-2 border-yellow-600 shadow-lg animate-pulse" />
+              </div>
+            </>
           )}
 
           {/* Distance Tool Overlay */}
