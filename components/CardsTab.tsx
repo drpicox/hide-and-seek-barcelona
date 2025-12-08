@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useLocalStorage } from '@/lib/hooks/useLocalStorage'
 import type { DeckState, Card } from '@/lib/types'
 import { createInitialDeck, shuffleDeck, getCardDefinition, formatCardText } from '@/lib/cards'
@@ -22,6 +22,14 @@ export default function CardsTab({ verySmall }: CardsTabProps) {
   const [mathQuestion, setMathQuestion] = useState({ num1: 0, num2: 0, answer: 0 })
   const [mathInput, setMathInput] = useState('')
   const [mathError, setMathError] = useState(false)
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
+
+  // Scroll inicial per veure un trosset de les cartes (evitar clic accidental)
+  useEffect(() => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTop = 120 // Scroll 120px cap avall
+    }
+  }, [])
 
   // Generar nova pregunta matemàtica
   const generateMathQuestion = () => {
@@ -187,8 +195,22 @@ export default function CardsTab({ verySmall }: CardsTabProps) {
   }
 
   return (
-    <div className="min-h-full bg-gray-50 pb-6">
+    <div ref={scrollContainerRef} className="min-h-full bg-gray-50 pb-6 overflow-y-auto">
       <div className="container mx-auto px-4 py-6 max-w-4xl">
+        {/* Botó robar carta FIX A DALT */}
+        <div className="bg-white rounded-lg shadow-md p-4 mb-6 sticky top-0 z-10">
+          <button
+            onClick={handleDraw}
+            disabled={deckState.deck.length === 0}
+            className={`w-full py-4 rounded-lg font-semibold text-lg transition-colors ${
+              deckState.deck.length === 0
+                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                : 'bg-purple-600 text-white hover:bg-purple-700 active:bg-purple-800'
+            }`}
+          >
+            🃏 Robar Carta del Mazo ({deckState.deck.length})
+          </button>
+        </div>
         {/* Mà de cartes */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
           <div className="flex items-center justify-between mb-4">
@@ -259,16 +281,16 @@ export default function CardsTab({ verySmall }: CardsTabProps) {
                           <span className={`float-right text-lg ml-2 ${getCardBadgeColor(card.type)} rounded-full w-7 h-7 flex items-center justify-center shadow-md`}>
                             {card.type === 'curse' ? '🔥' : card.type === 'upgrade' ? '⚡' : '⏱️'}
                           </span>
-                          <h4 className="font-bold text-sm leading-tight pr-1">{def.title}</h4>
+                          <h4 className="font-bold text-base leading-tight pr-1">{def.title}</h4>
                         </div>
 
                         {!isTimeBonus && (
-                          <div className="text-xs opacity-60 line-clamp-4 clear-both">
+                          <div className="text-sm opacity-60 line-clamp-4 clear-both">
                             {formatCardText(def.text, verySmall)}
                           </div>
                         )}
                         {isTimeBonus && (
-                          <div className="text-3xl font-black text-center mt-6 clear-both">
+                          <div className="text-xl font-black text-center mt-6 clear-both">
                             {formatCardText(def.text, verySmall)}
                           </div>
                         )}
@@ -290,21 +312,6 @@ export default function CardsTab({ verySmall }: CardsTabProps) {
               })}
             </div>
           )}
-        </div>
-
-        {/* Botó robar carta */}
-        <div className="bg-white rounded-lg shadow-md p-4 mb-6">
-          <button
-            onClick={handleDraw}
-            disabled={deckState.deck.length === 0}
-            className={`w-full py-4 rounded-lg font-semibold text-lg transition-colors ${
-              deckState.deck.length === 0
-                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                : 'bg-purple-600 text-white hover:bg-purple-700 active:bg-purple-800'
-            }`}
-          >
-            🃏 Robar Carta del Mazo ({deckState.deck.length})
-          </button>
         </div>
 
         {/* Header amb info del mazo (ABAIX DE TOT) */}
