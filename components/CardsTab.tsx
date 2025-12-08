@@ -283,7 +283,7 @@ export default function CardsTab({ verySmall }: CardsTabProps) {
                           </span>
                           <h4 className="font-bold text-base leading-tight pr-1">{def.title}</h4>
                           <div className="text-[10px] opacity-50 mt-0.5 clear-both">
-                            {verySmall ? 'Very Small' : 'Standard'}
+                            {verySmall ? 'Very Small' : 'Small'}
                           </div>
                         </div>
 
@@ -358,7 +358,7 @@ export default function CardsTab({ verySmall }: CardsTabProps) {
                         {getCardTypeLabel(selectedCard.type)}
                       </span>
                       <span className="text-sm px-3 py-1.5 rounded-full font-bold bg-gray-600 text-white shadow-lg">
-                        {verySmall ? 'Very Small (V)' : 'Standard (S)'}
+                        {verySmall ? 'Very Small (V)' : 'Small (S)'}
                       </span>
                     </div>
                     <button
