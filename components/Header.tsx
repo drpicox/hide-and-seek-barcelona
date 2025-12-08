@@ -125,7 +125,7 @@ export default function Header({
             }`}
             title={verySmall ? 'Mode Very Small actiu' : 'Activar mode Very Small'}
           >
-            {verySmall ? '✓S' : 'S'}
+            {verySmall ? '✓V' : 'V'}
           </button>
 
           <button

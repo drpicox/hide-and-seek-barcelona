@@ -329,6 +329,14 @@ export default function CardsTab({ verySmall }: CardsTabProps) {
               <p className="text-sm text-gray-600 mt-1">
                 Cartes al mazo: <span className="font-semibold text-purple-600">{deckState.deck.length}</span>
               </p>
+              <p className="text-xs text-gray-500 mt-2">
+                <span className={`px-2 py-1 rounded font-semibold ${verySmall ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>
+                  {verySmall ? '✓ Very Small (V)' : 'Small (S)'}
+                </span>
+                <span className="ml-2 opacity-75">
+                  {verySmall ? 'Valors reduïts' : 'Valors estàndard'}
+                </span>
+              </p>
             </div>
             <button
               onClick={handleNewGame}

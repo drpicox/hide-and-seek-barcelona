@@ -16,7 +16,7 @@ import CardsTab from './CardsTab'
 export function HideAndSeekApp() {
   const [activeTab, setActiveTab] = useState<TabId>('qa')
   const [activeHider, setActiveHider] = useLocalStorage<number>('hideAndSeekActiveHider', 0)
-  const [verySmall, setVerySmall] = useLocalStorage<boolean>('hideAndSeekVerySmall', false)
+  const [verySmall, setVerySmall] = useLocalStorage<boolean>('hideAndSeekVerySmall', true)
   const [allHidersQuestions, setAllHidersQuestions] = useLocalStorage<AllHidersData>(
     'hideAndSeekAllHiders',
     [
