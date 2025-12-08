@@ -549,7 +549,14 @@ export default function MapViewer({
               }}
               onClick={(e) => {
                 e.stopPropagation()
-                setSelectedStation(selectedStation?.name === station.name ? null : station)
+                const newStation = selectedStation?.name === station.name ? null : station
+                setSelectedStation(newStation)
+                if (newStation) {
+                  console.log('Estació seleccionada:', newStation.name)
+                  console.log('Radi del cercle (px):', 400 / metersPerPixel)
+                  console.log('Diàmetre del cercle (px):', 400 / metersPerPixel * 2)
+                  console.log('metersPerPixel:', metersPerPixel)
+                }
               }}
             >
               <div className={`w-3 h-3 rounded-full border-2 shadow-lg transition-all ${
@@ -579,16 +586,17 @@ export default function MapViewer({
               }}
             >
               <div
-                className="rounded-full border-4 border-yellow-400/60 bg-yellow-400/10"
+                className="rounded-full border-8 bg-yellow-300/30"
                 style={{
                   width: `${400 / metersPerPixel * 2}px`,
                   height: `${400 / metersPerPixel * 2}px`,
-                  boxShadow: '0 0 20px rgba(250, 204, 21, 0.4), inset 0 0 20px rgba(250, 204, 21, 0.1)'
+                  borderColor: 'rgba(234, 179, 8, 0.8)',
+                  boxShadow: '0 0 30px rgba(234, 179, 8, 0.6), inset 0 0 30px rgba(234, 179, 8, 0.2)'
                 }}
               />
               {/* Label for the circle */}
-              <div className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-full mb-2 bg-yellow-600/90 text-white text-xs px-2 py-1 rounded font-semibold whitespace-nowrap">
-                Àrea de joc (400m)
+              <div className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-full mb-2 bg-yellow-600 text-white text-sm px-3 py-1.5 rounded-lg font-bold whitespace-nowrap shadow-lg">
+                🎯 Àrea de joc (400m)
               </div>
             </div>
           )}
