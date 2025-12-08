@@ -139,12 +139,12 @@ export default function CardsTab({ verySmall }: CardsTabProps) {
       const def = getCardDefinition(card.cardKey)
       if (!def) return total
 
-      // Extreure el valor segons verySmall: V o S (NO L!)
+      // Extreure el valor segons verySmall: V (Very Small) o S (Small)
       const pattern = /\*\*V\s+(\d+(?:\.\d+)?)\s+\/\s+S\s+(\d+(?:\.\d+)?)\s+\/\s+M\s+(\d+(?:\.\d+)?)\s+\/\s+L\s+(\d+(?:\.\d+)?)\*\*/
       const match = def.text.match(pattern)
 
       if (match) {
-        const value = verySmall ? parseFloat(match[1]) : parseFloat(match[2]) // CORREGIT: S en lloc de L
+        const value = verySmall ? parseFloat(match[1]) : parseFloat(match[2]) // V o S
         return total + value
       }
 

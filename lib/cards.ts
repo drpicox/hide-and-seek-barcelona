@@ -259,11 +259,11 @@ export const CARD_DEFINITIONS: CardDefinition[] = [
 // Funció per formatar el text de les cartes segons verySmall
 export function formatCardText(text: string, verySmall: boolean): string {
   // Pattern: **V X / S Y / M Z / L W**
-  // Si verySmall: mostrem V (X), sino mostrem S (Y)
+  // Si verySmall: mostrem V (X), sino mostrem S (Y) - Small
   const pattern = /\*\*V\s+(\d+(?:\.\d+)?)\s+\/\s+S\s+(\d+(?:\.\d+)?)\s+\/\s+M\s+(\d+(?:\.\d+)?)\s+\/\s+L\s+(\d+(?:\.\d+)?)\*\*/g
 
   return text.replace(pattern, (match, v, s, m, l) => {
-    const value = verySmall ? v : s  // CORREGIT: ara mostra S en lloc de L
+    const value = verySmall ? v : s  // V=Very Small, S=Small
     return `**${value}**`
   })
 }
