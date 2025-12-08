@@ -274,26 +274,30 @@ export default function CardsTab({ verySmall }: CardsTabProps) {
                     onClick={() => setSelectedCard(card)}
                   >
                     {/* Contingut de la carta */}
-                    <div className="flex-1 p-4 flex flex-col justify-between overflow-hidden">
+                    <div className="flex-1 p-4 flex flex-col justify-between overflow-hidden relative">
+                      {/* Icona de tipus petita a dalt a la dreta */}
+                      <div className="absolute top-2 right-2">
+                        <span className={`text-sm ${getCardBadgeColor(card.type)} rounded-full w-5 h-5 flex items-center justify-center shadow-sm`}>
+                          {card.type === 'curse' ? '🔥' : card.type === 'upgrade' ? '⚡' : '⏱️'}
+                        </span>
+                      </div>
+
                       <div>
-                        {/* Títol amb icona flotant */}
-                        <div className="relative mb-2">
-                          <span className={`float-right text-lg ml-2 ${getCardBadgeColor(card.type)} rounded-full w-7 h-7 flex items-center justify-center shadow-md`}>
-                            {card.type === 'curse' ? '🔥' : card.type === 'upgrade' ? '⚡' : '⏱️'}
-                          </span>
-                          <h4 className="font-bold text-base leading-tight pr-1">{def.title}</h4>
-                          <div className="text-[10px] opacity-50 mt-0.5 clear-both">
+                        {/* Títol sense icona flotant */}
+                        <div className="relative mb-2 pr-7">
+                          <h4 className="font-bold text-base leading-tight">{def.title}</h4>
+                          <div className="text-[10px] opacity-50 mt-0.5">
                             {verySmall ? 'Very Small' : 'Small'}
                           </div>
                         </div>
 
                         {!isTimeBonus && (
-                          <div className="text-sm opacity-60 line-clamp-4 clear-both">
+                          <div className="text-sm opacity-60 line-clamp-4">
                             {formatCardText(def.text, verySmall)}
                           </div>
                         )}
                         {isTimeBonus && (
-                          <div className="text-xl font-black text-center mt-6 clear-both">
+                          <div className="text-xl font-black text-center mt-6">
                             {formatCardText(def.text, verySmall)}
                           </div>
                         )}
