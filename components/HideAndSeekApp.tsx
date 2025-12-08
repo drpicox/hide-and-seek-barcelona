@@ -11,6 +11,7 @@ import TrackingTab from './TrackingTab'
 import ManualTab from './ManualTab'
 import MapTab from './MapTab'
 import RandomTab from './RandomTab'
+import CardsTab from './CardsTab'
 
 export function HideAndSeekApp() {
   const [activeTab, setActiveTab] = useState<TabId>('qa')
@@ -207,6 +208,8 @@ export function HideAndSeekApp() {
           />
         ) : activeTab === 'random' ? (
           <RandomTab />
+        ) : activeTab === 'cartes' ? (
+          <CardsTab verySmall={verySmall} />
         ) : activeTab === 'manual' ? (
           <ManualTab />
         ) : activeTab === 'mapa' ? (

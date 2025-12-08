@@ -70,7 +70,7 @@ export const DEFAULT_HIDER_COLORS = [
 ] as const
 
 
-export type TabId = 'qa' | 'random' | 'manual' | 'mapa' | 'barris'
+export type TabId = 'qa' | 'random' | 'cartes' | 'manual' | 'mapa' | 'barris'
 
 export interface MeasurementPoint {
   x: number
@@ -102,4 +102,18 @@ export interface Station {
   name: string
   x: number
   y: number
+}
+
+// Cards system
+export type CardType = 'curse' | 'upgrade' | 'timeBonus'
+
+export interface Card {
+  id: string
+  type: CardType
+  cardKey: string
+}
+
+export interface DeckState {
+  deck: Card[]
+  hand: Card[]
 }

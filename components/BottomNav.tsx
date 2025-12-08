@@ -67,6 +67,30 @@ export default function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
         </button>
 
         <button
+          onClick={() => onTabChange('cartes')}
+          className={`flex-1 flex flex-col items-center justify-center transition-colors ${
+            activeTab === 'cartes'
+              ? 'text-purple-600 bg-purple-50'
+              : 'text-gray-600 hover:text-purple-600 hover:bg-gray-50'
+          }`}
+          aria-label="Cartes"
+          aria-current={activeTab === 'cartes' ? 'page' : undefined}
+        >
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            {/* Cards stack icon */}
+            <rect x="4" y="6" width="16" height="12" rx="2" strokeWidth={2} />
+            <path d="M6 6L6 4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2" strokeWidth={2} />
+            <line x1="9" y1="12" x2="15" y2="12" strokeWidth={2} strokeLinecap="round" />
+          </svg>
+          <span className="text-[10px] font-medium">Cartes</span>
+        </button>
+
+        <button
           onClick={() => onTabChange('manual')}
           className={`flex-1 flex flex-col items-center justify-center transition-colors ${
             activeTab === 'manual'
