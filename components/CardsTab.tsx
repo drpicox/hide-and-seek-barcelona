@@ -139,12 +139,12 @@ export default function CardsTab({ verySmall }: CardsTabProps) {
       const def = getCardDefinition(card.cardKey)
       if (!def) return total
 
-      // Extreure el valor segons verySmall
+      // Extreure el valor segons verySmall: V o S (NO L!)
       const pattern = /\*\*V\s+(\d+(?:\.\d+)?)\s+\/\s+S\s+(\d+(?:\.\d+)?)\s+\/\s+M\s+(\d+(?:\.\d+)?)\s+\/\s+L\s+(\d+(?:\.\d+)?)\*\*/
       const match = def.text.match(pattern)
 
       if (match) {
-        const value = verySmall ? parseFloat(match[1]) : parseFloat(match[4])
+        const value = verySmall ? parseFloat(match[1]) : parseFloat(match[2]) // CORREGIT: S en lloc de L
         return total + value
       }
 
@@ -282,6 +282,9 @@ export default function CardsTab({ verySmall }: CardsTabProps) {
                             {card.type === 'curse' ? '🔥' : card.type === 'upgrade' ? '⚡' : '⏱️'}
                           </span>
                           <h4 className="font-bold text-base leading-tight pr-1">{def.title}</h4>
+                          <div className="text-[10px] opacity-50 mt-0.5 clear-both">
+                            {verySmall ? 'Very Small' : 'Standard'}
+                          </div>
                         </div>
 
                         {!isTimeBonus && (
@@ -340,7 +343,7 @@ export default function CardsTab({ verySmall }: CardsTabProps) {
           onClick={() => setSelectedCard(null)}
         >
           <div
-            className={`max-w-2xl w-full rounded-2xl p-8 ${getCardColor(selectedCard.type)} border-4 max-h-[90vh] overflow-y-auto shadow-2xl`}
+            className={`max-w-2xl w-full rounded-2xl p-6 ${getCardColor(selectedCard.type)} border-4 max-h-[90vh] overflow-y-auto shadow-2xl`}
             onClick={(e) => e.stopPropagation()}
           >
             {(() => {
@@ -349,35 +352,40 @@ export default function CardsTab({ verySmall }: CardsTabProps) {
 
               return (
                 <>
-                  <div className="flex items-start justify-between mb-6">
-                    <span className={`text-base px-4 py-2 rounded-full font-bold ${getCardBadgeColor(selectedCard.type)} shadow-lg`}>
-                      {getCardTypeLabel(selectedCard.type)}
-                    </span>
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <span className={`text-sm px-3 py-1.5 rounded-full font-bold ${getCardBadgeColor(selectedCard.type)} shadow-lg`}>
+                        {getCardTypeLabel(selectedCard.type)}
+                      </span>
+                      <span className="text-sm px-3 py-1.5 rounded-full font-bold bg-gray-600 text-white shadow-lg">
+                        {verySmall ? 'Very Small (V)' : 'Standard (S)'}
+                      </span>
+                    </div>
                     <button
                       onClick={() => setSelectedCard(null)}
-                      className="text-3xl font-bold opacity-50 hover:opacity-100 transition-opacity w-10 h-10 flex items-center justify-center"
+                      className="text-2xl font-bold opacity-50 hover:opacity-100 transition-opacity w-8 h-8 flex items-center justify-center"
                     >
                       ✕
                     </button>
                   </div>
 
-                  <h2 className="text-5xl font-bold mb-8">{def.title}</h2>
+                  <h2 className="text-3xl font-bold mb-4">{def.title}</h2>
 
                   {def.cost && (
-                    <div className="mb-8 p-6 bg-white bg-opacity-60 rounded-xl border-2 border-current border-opacity-20">
-                      <p className="text-xl font-bold opacity-75 mb-3">Coste de jugar:</p>
-                      <p className="text-xl leading-relaxed">{formatCardText(def.cost, verySmall)}</p>
+                    <div className="mb-4 p-4 bg-white bg-opacity-60 rounded-xl border-2 border-current border-opacity-20">
+                      <p className="text-base font-bold opacity-75 mb-2">Coste de jugar:</p>
+                      <p className="text-base leading-relaxed">{formatCardText(def.cost, verySmall)}</p>
                     </div>
                   )}
 
-                  <div className="text-2xl leading-relaxed whitespace-pre-wrap mb-8">
+                  <div className="text-lg leading-relaxed whitespace-pre-wrap mb-6">
                     {formatCardText(def.text, verySmall)}
                   </div>
 
-                  <div className="mt-10 pt-8 border-t-2 border-current border-opacity-20 flex gap-4">
+                  <div className="mt-6 pt-4 border-t-2 border-current border-opacity-20 flex gap-3">
                     <button
                       onClick={() => setSelectedCard(null)}
-                      className="flex-1 px-8 py-5 bg-white bg-opacity-60 hover:bg-opacity-100 rounded-xl font-bold text-xl transition-colors border-2 border-current border-opacity-20"
+                      className="flex-1 px-6 py-3 bg-white bg-opacity-60 hover:bg-opacity-100 rounded-xl font-bold text-base transition-colors border-2 border-current border-opacity-20"
                     >
                       Tancar
                     </button>
@@ -386,7 +394,7 @@ export default function CardsTab({ verySmall }: CardsTabProps) {
                         handleDiscard(selectedCard)
                         setSelectedCard(null)
                       }}
-                      className="flex-1 px-8 py-5 bg-red-500 text-white hover:bg-red-600 rounded-xl font-bold text-xl transition-colors shadow-lg"
+                      className="flex-1 px-6 py-3 bg-red-500 text-white hover:bg-red-600 rounded-xl font-bold text-base transition-colors shadow-lg"
                     >
                       Descartar
                     </button>
